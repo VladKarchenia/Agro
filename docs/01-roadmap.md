@@ -5,7 +5,7 @@
 | # | Этап | Статус | Артефакты |
 |---|---|---|---|
 | 1 | Каркас документации, бриф, первые ADR | 🟨 | `docs/`, `docs/adr/` |
-| 2 | Брендбук «АгроЭд» | ⬜ | `docs/brand/` |
+| 2 | Брендбук «АгроЭд» | 🟨 | `docs/brand/brandbook.md` v0.1, ждём демо заказчику |
 | 3 | Репозиторий и скорлупа: Nuxt, Tailwind, линтеры, docker-compose (PostgreSQL, Directus) | ⬜ | |
 | 4 | Модель данных: категории-дерево, товары, атрибуты, фото, заказы | ⬜ | `docs/specs/data-model.md` |
 | 5 | SEO-основа: sitemap, robots, `llms.txt`, schema.org, canonical, хлебные крошки | ⬜ | `docs/specs/seo.md` |
