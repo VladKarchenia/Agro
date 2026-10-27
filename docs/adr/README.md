@@ -12,3 +12,6 @@
 | [0003](0003-postgresql.md) | PostgreSQL как БД | Предложено |
 | [0004](0004-product-attributes-model.md) | Модель характеристик товаров | Предложено |
 | [0005](0005-hosting-hoster-by.md) | Хостинг на VPS hoster.by | Принято |
+| [0006](0006-monorepo-pnpm.md) | Монорепозиторий на pnpm workspaces | Принято |
+| [0007](0007-biome-vitest-typescript.md) | Biome, Vitest, строгий TypeScript | Принято |
+| [0008](0008-demo-on-github-pages.md) | Демо-сайт на GitHub Pages | Принято |
