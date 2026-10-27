@@ -5,7 +5,7 @@
 | # | Этап | Статус | Артефакты |
 |---|---|---|---|
 | 1 | Каркас документации, бриф, первые ADR | 🟨 | `docs/`, `docs/adr/` |
-| 2 | Брендбук «АгроЭд» | 🟨 | `docs/brand/brandbook.md` v0.1, ждём демо заказчику |
+| 2 | Брендбук «АгроЭд» | 🟨 | `docs/brand/brandbook.md` v0.2, палитра B выбрана (ADR-0009), знак временный, ждём демо заказчику |
 | 3a | Скорлупа без Docker: монорепо, Nuxt, Tailwind, Biome, Vitest, CI, демо на GitHub Pages | ✅ | `apps/web`, ADR-0006…0008 |
 | 3b | docker-compose: PostgreSQL и Directus | ⬜ | ждём установки Docker |
 | 4 | Модель данных: категории-дерево, товары, атрибуты, фото, заказы | ⬜ | `docs/specs/data-model.md` |

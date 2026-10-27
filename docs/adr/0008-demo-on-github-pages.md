@@ -22,4 +22,5 @@
 - В настройках репозитория нужно один раз выбрать: Settings → Pages → Source: **GitHub Actions**.
 - Динамика (корзина, заявки, CMS) в статическом демо работать не будет, пока не появится отдельный бэкенд для демо.
 - Адрес демо: `https://<логин>.github.io/<репозиторий>/`.
+- На Windows повторный `nuxt generate` может падать с `EPERM: operation not permitted, rename` в `apps/web/node_modules/.cache` (Nitro пишет кэш пререндера атомарным переименованием). Перед локальной сборкой удалить `apps/web/node_modules/.cache` и `apps/web/.output`. В CI кэш всегда чистый, там проблемы нет.
 - На Windows в Git Bash переменную `NUXT_APP_BASE_URL=/Agro/` нужно задавать с `MSYS_NO_PATHCONV=1`, иначе Git Bash подменяет путь на `C:/Program Files/Git/Agro/`.

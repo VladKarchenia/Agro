@@ -15,3 +15,4 @@
 | [0006](0006-monorepo-pnpm.md) | Монорепозиторий на pnpm workspaces | Принято |
 | [0007](0007-biome-vitest-typescript.md) | Biome, Vitest, строгий TypeScript | Принято |
 | [0008](0008-demo-on-github-pages.md) | Демо-сайт на GitHub Pages | Принято |
+| [0009](0009-brand-palette-b.md) | Основная палитра: вариант B «хвойный и лайм» | Принято |

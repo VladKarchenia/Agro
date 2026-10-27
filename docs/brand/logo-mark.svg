@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="АгроЭд">
-  <rect width="64" height="64" rx="14" fill="#1B1E23"/>
-  <g fill="#F5A524">
+  <rect width="64" height="64" rx="14" fill="#16241C"/>
+  <g fill="#A8D02E">
     <path d="M30.75 12h2.5v43h-2.5z"/>
     <ellipse cx="32" cy="14" rx="3.6" ry="6.4"/>
     <path d="M32 30Q21 30 20 19Q31 19 32 30Z"/>

@@ -1,65 +1,65 @@
 @import "tailwindcss";
 
 /*
- * Токены бренда, см. docs/brand/brandbook.md.
- * Слой 1: палитра (варианты A «graphite/amber» и B «forest/lime»).
+ * Токены бренда, см. docs/brand/brandbook.md (палитра: вариант B, ADR-0009).
+ * Слой 1: палитра «forest» (хвойный) и «lime» (лайм).
  * Слой 2: смысловые алиасы. Компоненты используют только их,
- * поэтому смена палитры после демо правится здесь, в одном месте.
+ * поэтому смена палитры правится здесь, в одном месте.
  */
 
 @theme {
   --font-heading: "Manrope", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
 
-  --color-graphite-50: #f6f7f8;
-  --color-graphite-100: #eceef1;
-  --color-graphite-200: #d8dbe1;
-  --color-graphite-300: #b8bdc6;
-  --color-graphite-400: #9097a3;
-  --color-graphite-500: #6a717d;
-  --color-graphite-600: #4b515c;
-  --color-graphite-700: #363b44;
-  --color-graphite-800: #262a31;
-  --color-graphite-900: #1b1e23;
-  --color-graphite-950: #14161a;
+  --color-forest-50: #f4f7f4;
+  --color-forest-100: #e8eee9;
+  --color-forest-200: #d2dcd4;
+  --color-forest-300: #b1c0b5;
+  --color-forest-400: #8a9c8f;
+  --color-forest-500: #66786b;
+  --color-forest-600: #485a4d;
+  --color-forest-700: #32443a;
+  --color-forest-800: #223229;
+  --color-forest-900: #16241c;
+  --color-forest-950: #0e1913;
 
-  --color-amber-50: #fff7e6;
-  --color-amber-100: #ffebc2;
-  --color-amber-200: #ffd88a;
-  --color-amber-300: #ffc252;
-  --color-amber-400: #f5a524;
-  --color-amber-500: #e08e0b;
-  --color-amber-600: #b87008;
-  --color-amber-700: #8f5509;
+  --color-lime-50: #f4fae0;
+  --color-lime-100: #e6f4b8;
+  --color-lime-200: #d2ea82;
+  --color-lime-300: #bee04f;
+  --color-lime-400: #a8d02e;
+  --color-lime-500: #8db61f;
+  --color-lime-600: #6d9016;
+  --color-lime-700: #4e6b10;
 
-  --color-success-700: #3a6e2f;
+  --color-success-700: #2f6f3a;
   --color-danger-700: #b02a2a;
 }
 
 @theme inline {
-  --color-brand: var(--color-amber-400);
-  --color-brand-hover: var(--color-amber-500);
-  --color-brand-active: var(--color-amber-600);
-  --color-brand-soft: var(--color-amber-50);
-  --color-on-brand: var(--color-graphite-950);
-  --color-link: var(--color-amber-700);
-  --color-focus: var(--color-amber-600);
+  --color-brand: var(--color-lime-400);
+  --color-brand-hover: var(--color-lime-500);
+  --color-brand-active: var(--color-lime-600);
+  --color-brand-soft: var(--color-lime-50);
+  --color-on-brand: var(--color-forest-950);
+  --color-link: var(--color-lime-700);
+  --color-focus: var(--color-lime-600);
 
-  --color-ink: var(--color-graphite-900);
-  --color-ink-muted: var(--color-graphite-600);
-  --color-ink-subtle: var(--color-graphite-500);
+  --color-ink: var(--color-forest-900);
+  --color-ink-muted: var(--color-forest-600);
+  --color-ink-subtle: var(--color-forest-500);
 
   --color-surface: #fff;
-  --color-surface-alt: var(--color-graphite-50);
-  --color-surface-sunken: var(--color-graphite-100);
-  --color-line: var(--color-graphite-200);
+  --color-surface-alt: var(--color-forest-50);
+  --color-surface-sunken: var(--color-forest-100);
+  --color-line: var(--color-forest-200);
 
-  --color-dark: var(--color-graphite-900);
-  --color-dark-deep: var(--color-graphite-950);
-  --color-dark-raised: var(--color-graphite-800);
-  --color-dark-line: var(--color-graphite-700);
+  --color-dark: var(--color-forest-900);
+  --color-dark-deep: var(--color-forest-950);
+  --color-dark-raised: var(--color-forest-800);
+  --color-dark-line: var(--color-forest-700);
   --color-on-dark: #fff;
-  --color-on-dark-muted: var(--color-graphite-300);
+  --color-on-dark-muted: var(--color-forest-300);
 
   --radius-control: 8px;
   --radius-card: 12px;
