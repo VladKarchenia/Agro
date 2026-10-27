@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/*
+ * Токены бренда, см. docs/brand/brandbook.md.
+ * Слой 1: палитра (варианты A «graphite/amber» и B «forest/lime»).
+ * Слой 2: смысловые алиасы. Компоненты используют только их,
+ * поэтому смена палитры после демо правится здесь, в одном месте.
+ */
+
+@theme {
+  --font-heading: "Manrope", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --color-graphite-50: #f6f7f8;
+  --color-graphite-100: #eceef1;
+  --color-graphite-200: #d8dbe1;
+  --color-graphite-300: #b8bdc6;
+  --color-graphite-400: #9097a3;
+  --color-graphite-500: #6a717d;
+  --color-graphite-600: #4b515c;
+  --color-graphite-700: #363b44;
+  --color-graphite-800: #262a31;
+  --color-graphite-900: #1b1e23;
+  --color-graphite-950: #14161a;
+
+  --color-amber-50: #fff7e6;
+  --color-amber-100: #ffebc2;
+  --color-amber-200: #ffd88a;
+  --color-amber-300: #ffc252;
+  --color-amber-400: #f5a524;
+  --color-amber-500: #e08e0b;
+  --color-amber-600: #b87008;
+  --color-amber-700: #8f5509;
+
+  --color-success-700: #3a6e2f;
+  --color-danger-700: #b02a2a;
+}
+
+@theme inline {
+  --color-brand: var(--color-amber-400);
+  --color-brand-hover: var(--color-amber-500);
+  --color-brand-active: var(--color-amber-600);
+  --color-brand-soft: var(--color-amber-50);
+  --color-on-brand: var(--color-graphite-950);
+  --color-link: var(--color-amber-700);
+  --color-focus: var(--color-amber-600);
+
+  --color-ink: var(--color-graphite-900);
+  --color-ink-muted: var(--color-graphite-600);
+  --color-ink-subtle: var(--color-graphite-500);
+
+  --color-surface: #fff;
+  --color-surface-alt: var(--color-graphite-50);
+  --color-surface-sunken: var(--color-graphite-100);
+  --color-line: var(--color-graphite-200);
+
+  --color-dark: var(--color-graphite-900);
+  --color-dark-deep: var(--color-graphite-950);
+  --color-dark-raised: var(--color-graphite-800);
+  --color-dark-line: var(--color-graphite-700);
+  --color-on-dark: #fff;
+  --color-on-dark-muted: var(--color-graphite-300);
+
+  --radius-control: 8px;
+  --radius-card: 12px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface-alt);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    line-height: 1.2;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}

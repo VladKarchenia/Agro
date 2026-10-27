@@ -1,0 +1,6 @@
+packages:
+  - apps/*
+
+# pnpm 11 не запускает скрипты сборки зависимостей без явного разрешения
+allowBuilds:
+  esbuild: true

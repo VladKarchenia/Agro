@@ -1,0 +1,21 @@
+{
+  "name": "agroed",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @agroed/web dev",
+    "build": "pnpm --filter @agroed/web build",
+    "generate": "pnpm --filter @agroed/web generate",
+    "preview": "pnpm --filter @agroed/web preview",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "pnpm --filter @agroed/web typecheck",
+    "test": "pnpm --filter @agroed/web test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.3"
+  }
+}
