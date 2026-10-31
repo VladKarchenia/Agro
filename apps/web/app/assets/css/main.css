@@ -71,6 +71,14 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* Резервируем место под скроллбар, чтобы контент не сдвигался между страницами с прокруткой и без */
+    scrollbar-gutter: stable;
+  }
+
+  @supports not (scrollbar-gutter: stable) {
+    html {
+      overflow-y: scroll;
+    }
   }
 
   body {

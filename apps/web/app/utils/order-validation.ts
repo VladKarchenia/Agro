@@ -86,7 +86,8 @@ export function validateOrder(input: OrderFormInput): { valid: boolean; errors: 
   else if (name.length > LIMITS.name) errors.name = 'Имя слишком длинное'
 
   if (!input.phone.trim()) errors.phone = 'Укажите телефон'
-  else if (!normalizePhone(input.phone)) errors.phone = 'Введите номер в формате +375 29 123-45-67'
+  else if (!normalizePhone(input.phone))
+    errors.phone = 'Введите номер полностью: +375 (29) 123-45-67'
 
   if (!email) errors.email = 'Укажите email'
   else if (email.length > LIMITS.email || !EMAIL_RE.test(email)) {

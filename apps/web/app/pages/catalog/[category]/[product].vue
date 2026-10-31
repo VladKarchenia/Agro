@@ -40,7 +40,7 @@ useSeoMeta({ title: product.name, description: product.summary })
           <AddToCartButton :slug="product.slug" :name="product.name" :quantity="quantity" />
         </div>
         <p class="mt-4 text-sm text-ink-subtle">
-          <NuxtLink to="/cart" class="text-link underline">Перейти к заявке</NuxtLink>
+          <NuxtLink to="/cart" class="text-link underline">Перейти в корзину</NuxtLink>
         </p>
       </div>
     </div>

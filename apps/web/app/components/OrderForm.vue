@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { buildConsentInfo, CONSENT_VERSION } from '~/content/order-consent'
-import { company } from '~/data/company'
+import { CONSENT_VERSION } from '~/content/order-consent'
 import type { CartItem } from '~/utils/cart'
 import { submitOrder } from '~/utils/order-submit'
 import {
@@ -17,7 +16,6 @@ const props = defineProps<{ items: CartItem[] }>()
 const emit = defineEmits<{ done: [demo: boolean] }>()
 
 const config = useRuntimeConfig()
-const consentInfo = buildConsentInfo(company)
 
 const form = reactive(emptyOrderForm())
 const touched = reactive<Partial<Record<OrderField, boolean>>>({})
@@ -105,15 +103,11 @@ const segmentClass = (active: boolean) => [
       :error="errors.name"
       @blur="touched.name = true"
     />
-    <BaseInput
+    <PhoneInput
       id="field-phone"
       v-model="form.phone"
       label="Телефон"
-      type="tel"
       required
-      autocomplete="tel"
-      inputmode="tel"
-      placeholder="+375 29 123-45-67"
       :error="errors.phone"
       @blur="touched.phone = true"
     />
@@ -183,23 +177,8 @@ const segmentClass = (active: boolean) => [
       </label>
     </div>
 
-    <section
-      class="rounded-card border border-line bg-surface-alt p-4 text-sm"
-      aria-labelledby="consent-title"
-    >
-      <h3 id="consent-title" class="font-semibold">Обработка персональных данных</h3>
-      <dl class="mt-2 grid gap-1.5">
-        <div v-for="row in consentInfo.rows" :key="row.label">
-          <dt class="inline font-medium">{{ row.label }}:</dt>
-          <dd class="inline text-ink-muted">{{ ' ' }}{{ row.value }}</dd>
-        </div>
-      </dl>
-      <h4 class="mt-4 font-semibold">Ваши права</h4>
-      <p class="mt-1 text-ink-muted">{{ consentInfo.rights }}</p>
-    </section>
-
     <div class="grid gap-1.5">
-      <label class="flex cursor-pointer items-start gap-3">
+      <label class="flex cursor-pointer items-start gap-3 text-sm">
         <input
           id="field-consent"
           v-model="form.consent"
@@ -210,8 +189,11 @@ const segmentClass = (active: boolean) => [
           @change="touched.consent = true"
         />
         <span>
-          Даю согласие на обработку моих персональных данных на указанных условиях и ознакомлен(а)
-          с
+          Даю
+          <NuxtLink to="/consent" target="_blank" class="text-link underline">
+            согласие на обработку персональных данных
+          </NuxtLink>
+          и ознакомлен(а) с
           <NuxtLink to="/privacy" target="_blank" class="text-link underline">
             политикой обработки персональных данных
           </NuxtLink>

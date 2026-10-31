@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getProduct } from '~/data/catalog'
 
-useSeoMeta({ title: 'Заявка', robots: 'noindex, nofollow' })
+useSeoMeta({ title: 'Корзина', robots: 'noindex, nofollow' })
 
 const { items, ready, update, remove, clear } = useCart()
 
@@ -22,9 +22,9 @@ function onDone(demo: boolean) {
 
 <template>
   <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
-    <h1 class="text-3xl font-extrabold md:text-5xl">Заявка</h1>
+    <h1 class="text-3xl font-extrabold md:text-5xl">Корзина</h1>
 
-    <p v-if="!ready" class="mt-8 text-ink-muted" aria-busy="true">Загружаем заявку…</p>
+    <p v-if="!ready" class="mt-8 text-ink-muted" aria-busy="true">Загружаем корзину…</p>
 
     <section v-else-if="done" class="mt-8 max-w-xl" aria-live="polite">
       <h2 class="text-2xl font-bold">Заявка принята</h2>
@@ -44,7 +44,7 @@ function onDone(demo: boolean) {
     </section>
 
     <section v-else-if="items.length === 0" class="mt-8 max-w-xl">
-      <p class="text-ink-muted">В заявке пока нет товаров. Добавьте их из каталога.</p>
+      <p class="text-ink-muted">В корзине пока нет товаров. Добавьте их из каталога.</p>
       <div class="mt-6">
         <AppButton to="/catalog">Открыть каталог</AppButton>
       </div>
@@ -68,7 +68,7 @@ function onDone(demo: boolean) {
               </NuxtLink>
               <p v-else class="font-bold text-ink-muted">Товар больше недоступен</p>
               <p v-if="row.product" class="text-sm text-ink-muted">Цена по запросу</p>
-              <p v-else class="text-sm text-danger">Он не попадёт в заявку. Удалите его из списка.</p>
+              <p v-else class="text-sm text-danger">Он не попадёт в заявку. Удалите его из корзины.</p>
             </div>
             <QuantityInput
               v-if="row.product"
@@ -79,7 +79,7 @@ function onDone(demo: boolean) {
             <button
               type="button"
               class="min-h-11 px-2 text-sm text-link underline"
-              :aria-label="`Удалить из заявки: ${row.product?.name ?? row.item.slug}`"
+              :aria-label="`Удалить из корзины:${row.product?.name ?? row.item.slug}`"
               @click="remove(row.item.slug)"
             >
               Удалить
@@ -89,7 +89,7 @@ function onDone(demo: boolean) {
       </section>
 
       <section aria-labelledby="form-title">
-        <h2 id="form-title" class="text-xl font-bold">Контактные данные</h2>
+        <h2 id="form-title" class="text-xl font-bold">Оформление заявки</h2>
         <div class="mt-4">
           <OrderForm :items="availableItems" @done="onDone" />
         </div>

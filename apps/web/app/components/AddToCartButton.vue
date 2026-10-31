@@ -23,11 +23,11 @@ const inCart = computed(() => quantityOf(props.slug))
 
 <template>
   <div class="grid gap-1.5">
-    <AppButton :aria-label="`В заявку: ${name}`" @click="onAdd">
-      {{ justAdded ? 'Добавлено' : 'В заявку' }}
+    <AppButton class="w-full" :aria-label="`В корзину: ${name}`" @click="onAdd">
+      {{ justAdded ? 'Добавлено' : 'В корзину' }}
     </AppButton>
     <p class="min-h-5 text-sm text-ink-subtle" aria-live="polite">
-      <template v-if="justAdded">В заявке: {{ inCart }} шт.</template>
+      <template v-if="justAdded">В корзине: {{ inCart }} шт.</template>
     </p>
   </div>
 </template>

@@ -18,7 +18,7 @@ watch(
 const { count, ready } = useCart()
 const showCount = computed(() => ready.value && count.value > 0)
 const cartLabel = computed(() =>
-  showCount.value ? `Заявка, позиций: ${count.value}` : 'Заявка, пока пусто',
+  showCount.value ? `Корзина, позиций: ${count.value}` : 'Корзина, пока пусто',
 )
 </script>
 
@@ -57,8 +57,9 @@ const cartLabel = computed(() =>
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <rect x="5" y="4" width="14" height="17" rx="2" />
-            <path d="M9 4V3h6v1M9 11h6M9 15h4" />
+            <path d="M2.5 3.5h2.4l2.1 11.2a1.5 1.5 0 0 0 1.5 1.2h8.9a1.5 1.5 0 0 0 1.45-1.1L20.8 7.5H6.1" />
+            <circle cx="9.5" cy="20" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="17.5" cy="20" r="1.4" fill="currentColor" stroke="none" />
           </svg>
           <span
             v-if="showCount"

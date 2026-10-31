@@ -6,6 +6,9 @@
         <NuxtLink to="/privacy" class="underline hover:text-on-dark">
           Политика обработки персональных данных
         </NuxtLink>
+        <NuxtLink to="/consent" class="underline hover:text-on-dark">
+          Согласие на обработку персональных данных
+        </NuxtLink>
       </div>
       <span>Сайт в разработке. Демо-версия: цвета, знак и шрифты временные.</span>
     </div>
