@@ -44,6 +44,8 @@
   --color-on-brand: var(--color-forest-950);
   --color-link: var(--color-lime-700);
   --color-focus: var(--color-lime-600);
+  --color-success: var(--color-success-700);
+  --color-danger: var(--color-danger-700);
 
   --color-ink: var(--color-forest-900);
   --color-ink-muted: var(--color-forest-600);
@@ -53,6 +55,7 @@
   --color-surface-alt: var(--color-forest-50);
   --color-surface-sunken: var(--color-forest-100);
   --color-line: var(--color-forest-200);
+  --color-line-strong: var(--color-forest-500);
 
   --color-dark: var(--color-forest-900);
   --color-dark-deep: var(--color-forest-950);

@@ -17,6 +17,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteEnv: 'production',
+      // 'demo': заявка не отправляется (статичное демо). 'api': отправка на /api/orders после подключения бэкенда
+      orderMode: 'demo',
     },
   },
   app: {

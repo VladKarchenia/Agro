@@ -16,3 +16,4 @@
 | [0007](0007-biome-vitest-typescript.md) | Biome, Vitest, строгий TypeScript | Принято |
 | [0008](0008-demo-on-github-pages.md) | Демо-сайт на GitHub Pages | Принято |
 | [0009](0009-brand-palette-b.md) | Основная палитра: вариант B «хвойный и лайм» | Принято |
+| [0010](0010-cart-storage-and-order-submit.md) | Корзина в localStorage и режимы отправки заявки | Принято |

@@ -3,8 +3,10 @@ withDefaults(
   defineProps<{
     to?: string
     variant?: 'primary' | 'ghost' | 'ghost-light'
+    type?: 'button' | 'submit'
+    disabled?: boolean
   }>(),
-  { variant: 'primary' },
+  { variant: 'primary', type: 'button', disabled: false },
 )
 
 const styles = {
@@ -25,8 +27,9 @@ const styles = {
   </NuxtLink>
   <button
     v-else
-    type="button"
-    class="inline-flex h-12 items-center justify-center rounded-control border-2 px-6 font-semibold transition-colors"
+    :type="type"
+    :disabled="disabled"
+    class="inline-flex h-12 items-center justify-center rounded-control border-2 px-6 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
     :class="styles[variant]"
   >
     <slot />
