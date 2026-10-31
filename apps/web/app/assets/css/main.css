@@ -125,6 +125,26 @@
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
+
+  /*
+   * Курсор «рука» на всём, что можно нажать. Tailwind 4 сбрасывает курсор кнопок на стрелку,
+   * поэтому возвращаем его глобально, а не классом на каждом элементе.
+   */
+  a[href],
+  button,
+  summary,
+  select,
+  [role="button"],
+  input[type="checkbox"],
+  input[type="radio"],
+  label:has(input[type="checkbox"], input[type="radio"]) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 @layer components {
