@@ -15,7 +15,15 @@
     "typecheck": "pnpm --filter @agroed/web typecheck",
     "test": "pnpm --filter @agroed/web test",
     "seo:audit": "node scripts/seo-audit.mjs",
-    "test:e2e": "pnpm --filter @agroed/web test:e2e"
+    "test:e2e": "pnpm --filter @agroed/web test:e2e",
+    "env:init": "node scripts/env-init.mjs",
+    "db:up": "docker compose up -d db --wait",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f db",
+    "db:psql": "docker compose exec db sh -c \"psql -U $POSTGRES_USER -d $POSTGRES_DB\"",
+    "db:backup": "node scripts/db.mjs backup",
+    "db:restore": "node scripts/db.mjs restore",
+    "db:reset": "docker compose down -v"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.3",

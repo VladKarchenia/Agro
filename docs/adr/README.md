@@ -8,8 +8,8 @@
 | ADR | Решение | Статус |
 |---|---|---|
 | [0001](0001-nuxt-frontend.md) | Nuxt для витрины | Принято |
-| [0002](0002-headless-cms-directus.md) | Directus как админка и CMS | Предложено |
-| [0003](0003-postgresql.md) | PostgreSQL как БД | Предложено |
+| [0002](0002-headless-cms-directus.md) | Выбор CMS и админки (Directus под вопросом, рекомендация Payload) | **Пересматривается** |
+| [0003](0003-postgresql.md) | PostgreSQL как БД | Принято |
 | [0004](0004-product-attributes-model.md) | Модель характеристик товаров | Предложено |
 | [0005](0005-hosting-hoster-by.md) | Хостинг на VPS hoster.by | Принято |
 | [0006](0006-monorepo-pnpm.md) | Монорепозиторий на pnpm workspaces | Принято |

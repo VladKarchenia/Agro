@@ -1,0 +1,29 @@
+# Локальное окружение разработки. Продакшен описывается отдельно (docs/specs/infrastructure.md).
+# Запуск: pnpm db:up  (перед первым запуском pnpm env:init)
+name: agroed
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-agroed}
+      POSTGRES_USER: ${DB_USER:-agroed}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Задайте DB_PASSWORD в .env, выполните pnpm env:init}
+      TZ: Europe/Minsk
+      # UTF-8 и русская сортировка (ICU), чтобы ORDER BY по названиям шёл по алфавиту: Ё, Ж, З
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C.UTF-8 --locale-provider=icu --icu-locale=ru-RU"
+    ports:
+      # Только с этого компьютера: база не должна быть доступна из сети
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+volumes:
+  pgdata:

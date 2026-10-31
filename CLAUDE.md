@@ -6,7 +6,7 @@
 ## Стек
 
 Монорепозиторий (pnpm): `apps/web` на Nuxt 4 (SSR) + Tailwind 4, Biome, Vitest, TypeScript strict.
-Дальше: PostgreSQL и Directus (админка), VPS на hoster.by. Часть решений ещё в статусе «Предложено», см. [docs/adr/](docs/adr/README.md).
+PostgreSQL 17 в Docker (`compose.yaml`), VPS на hoster.by. CMS и админка: выбор не завершён, рекомендация Payload 3, Directus под вопросом из-за новой лицензии (ADR-0002). Часть решений ещё в статусе «Предложено», см. [docs/adr/](docs/adr/README.md).
 
 ## Команды (из корня)
 
@@ -17,6 +17,8 @@
 - `pnpm test:e2e`: сквозные тесты Playwright против собранного сайта (сначала `pnpm generate`; локально с Edge: `E2E_BROWSER_CHANNEL=msedge`)
 - `pnpm generate`: статическая сборка (для демо на GitHub Pages и для SEO-аудита)
 - `pnpm seo:audit`: SEO-аудит собранного HTML (после `pnpm generate`)
+
+База данных (нужен запущенный Docker Desktop): `pnpm env:init` (один раз, создаёт `.env`), `pnpm db:up`, `pnpm db:down`, `pnpm db:psql`, `pnpm db:backup`, `pnpm db:restore <файл>`. `pnpm db:reset` удаляет все данные базы. Подробности: [docs/specs/infrastructure.md](docs/specs/infrastructure.md). Пароли только в `.env`, в git он не попадает.
 
 Перед коммитом должны проходить `lint`, `typecheck` и `test`, а при изменении страниц, данных каталога или шаблонов ещё `pnpm generate && pnpm seo:audit`. При изменении корзины, формы заявки и интерфейса запускать `pnpm test:e2e`, а новое поведение покрывать тестом в `apps/web/e2e/`.
 В Git Bash на Windows переменные с путём, например `NUXT_APP_BASE_URL=/Agro/`, задавать с `MSYS_NO_PATHCONV=1`. Перед повторной локальной сборкой на Windows удалять `apps/web/node_modules/.cache` и `apps/web/.output`.
