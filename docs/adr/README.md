@@ -19,3 +19,4 @@
 | [0010](0010-cart-storage-and-order-submit.md) | Корзина в localStorage и режимы отправки заявки | Принято |
 | [0011](0011-seo-architecture.md) | SEO собственным слоем и автоматический аудит | Принято |
 | [0012](0012-e2e-playwright.md) | Сквозные тесты на Playwright | Принято |
+| [0013](0013-custom-scrollbar.md) | Свой скроллбар поверх страницы | Принято |

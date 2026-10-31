@@ -71,14 +71,39 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    /* Резервируем место под скроллбар, чтобы контент не сдвигался между страницами с прокруткой и без */
+    /* Цвет шапки и подвала. Виден за краями страницы при «резиночной» прокрутке и в запасной полосе ниже */
+    background-color: var(--color-dark);
+  }
+
+  /*
+   * Запасной вариант без своего скроллбара (нет JS, сенсорные устройства, режим высокой контрастности):
+   * системная полоса, тёмная и узкая, а место под неё зарезервировано всегда, чтобы раскладка не прыгала
+   * между страницами с прокруткой и без.
+   */
+  html:not(.has-custom-scrollbar) {
     scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-forest-500) var(--color-dark);
   }
 
   @supports not (scrollbar-gutter: stable) {
-    html {
+    html:not(.has-custom-scrollbar) {
       overflow-y: scroll;
     }
+  }
+
+  /*
+   * Свой скроллбар (мышь и трекпад): системную полосу прячем, поэтому страница всегда занимает всю
+   * ширину и фон доходит до правого края, а ползунок рисует компонент AppScrollbar поверх страницы.
+   * Прокрутка остаётся настоящей: колесо, клавиатура и поиск по странице работают как обычно.
+   * Класс ставит маленький скрипт в <head> до первой отрисовки, чтобы раскладка не дёргалась.
+   */
+  html.has-custom-scrollbar {
+    scrollbar-width: none;
+  }
+
+  html.has-custom-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   body {
@@ -99,5 +124,41 @@
   :focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Свой скроллбар (компонент AppScrollbar): узкая зона у правого края и ползунок внутри */
+  .app-scrollbar {
+    position: fixed;
+    inset-block: 0;
+    right: 0;
+    z-index: 60;
+    width: 14px;
+    touch-action: none;
+  }
+
+  .app-scrollbar__thumb {
+    position: absolute;
+    top: 0;
+    right: 3px;
+    width: 8px;
+    border-radius: 9999px;
+    background-color: var(--color-forest-500);
+    /* Светлая кромка отделяет ползунок и от тёмной шапки, и от светлой страницы */
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.6);
+    transition: background-color 0.15s;
+  }
+
+  .app-scrollbar:hover .app-scrollbar__thumb,
+  .app-scrollbar__thumb[data-dragging="true"] {
+    background-color: var(--color-forest-700);
+  }
+
+  /* В режиме высокой контрастности остаётся системный скроллбар */
+  @media (forced-colors: active) {
+    .app-scrollbar {
+      display: none;
+    }
   }
 }

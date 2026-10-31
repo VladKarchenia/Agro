@@ -83,6 +83,8 @@ test.describe('Корзина: добавление', () => {
       .getByRole('button', { name: /^В корзину/ })
       .click()
 
+    // Пользователь возвращается на первую вкладку: корзина в ней уже обновлена
+    await page.bringToFront()
     await expect(cartLink(page)).toHaveAccessibleName('Корзина, позиций: 1')
   })
 })

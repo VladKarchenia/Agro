@@ -7,8 +7,12 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (nuxtApp.isHydrating) nuxtApp.hooks.hookOnce('app:suspense:resolve', hydrate)
   else hydrate()
 
-  // Корзина синхронизируется между вкладками
+  // Корзина синхронизируется между вкладками. Событие storage приходит сразу, но браузеры не всегда
+  // доставляют его фоновой вкладке (особенно мобильные), поэтому при возврате на вкладку читаем заново
   window.addEventListener('storage', (event) => {
     if (event.key === null || event.key.startsWith('agroed:cart:')) hydrate()
+  })
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') hydrate()
   })
 })
