@@ -4,7 +4,14 @@ import type { NuxtError } from '#app'
 const props = defineProps<{ error: NuxtError }>()
 const is404 = computed(() => props.error.statusCode === 404)
 
-useHead({ title: is404.value ? 'Страница не найдена' : 'Ошибка' })
+usePageSeo({
+  title: is404.value ? 'Страница не найдена' : 'Ошибка',
+  description: is404.value
+    ? 'Такой страницы нет. Возможно, адрес изменился или страница была удалена.'
+    : 'Произошла ошибка. Попробуйте обновить страницу позже.',
+  noindex: true,
+  canonical: false,
+})
 </script>
 
 <template>

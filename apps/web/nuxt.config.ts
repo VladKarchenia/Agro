@@ -1,8 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
 
-// Демо-сборка (GitHub Pages) закрыта от индексации, чтобы не конкурировать с боевым доменом
-const isDemo = process.env.NUXT_PUBLIC_SITE_ENV === 'demo'
-
 export default defineNuxtConfig({
   compatibilityDate: '2026-10-27',
   devtools: { enabled: true },
@@ -15,8 +12,16 @@ export default defineNuxtConfig({
     strict: true,
   },
   runtimeConfig: {
+    // Разрешать ли ботам обучения ИИ (GPTBot, ClaudeBot, Google-Extended…) собирать контент: 'allow' | 'disallow'.
+    // Не влияет на поисковую выдачу и ответы ИИ-поиска. Решение заказчика, см. docs/specs/seo.md
+    aiTrainingCrawlers: 'allow',
     public: {
+      // 'production': сайт открыт для индексации. 'demo': закрыт (GitHub Pages и другие тестовые окружения).
+      // Задаётся переменной NUXT_PUBLIC_SITE_ENV
       siteEnv: 'production',
+      // Публичный адрес сайта вместе с базовым путём, без завершающего слеша: NUXT_PUBLIC_SITE_URL
+      // Домен agroed.by предварительный, он ещё не куплен
+      siteUrl: 'https://agroed.by',
       // 'demo': заявка не отправляется (статичное демо). 'api': отправка на /api/orders после подключения бэкенда
       orderMode: 'demo',
     },
@@ -24,8 +29,15 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'ru' },
-      meta: isDemo ? [{ name: 'robots', content: 'noindex, nofollow' }] : [],
+      // Безопасное значение по умолчанию: всё, что не объявило SEO через usePageSeo (в том числе оболочки
+      // 404.html и 200.html, которые рендерятся без приложения), закрыто от индексации.
+      // Страницу открывает только usePageSeo
+      meta: [{ name: 'robots', content: 'noindex, nofollow' }],
     },
+  },
+  nitro: {
+    // Эти файлы генерируются серверными маршрутами и не имеют ссылок на сайте, поэтому перечислены явно
+    prerender: { routes: ['/robots.txt', '/sitemap.xml', '/llms.txt'] },
   },
   fonts: {
     families: [

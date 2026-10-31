@@ -14,10 +14,11 @@
 - `pnpm lint` / `pnpm lint:fix`: Biome
 - `pnpm typecheck`: проверка типов
 - `pnpm test`: Vitest
-- `pnpm generate`: статическая сборка (для демо на GitHub Pages)
+- `pnpm generate`: статическая сборка (для демо на GitHub Pages и для SEO-аудита)
+- `pnpm seo:audit`: SEO-аудит собранного HTML (после `pnpm generate`)
 
-Перед коммитом должны проходить `lint`, `typecheck` и `test`.
-В Git Bash на Windows переменные с путём, например `NUXT_APP_BASE_URL=/Agro/`, задавать с `MSYS_NO_PATHCONV=1`.
+Перед коммитом должны проходить `lint`, `typecheck` и `test`, а при изменении страниц, данных каталога или шаблонов ещё `pnpm generate && pnpm seo:audit`.
+В Git Bash на Windows переменные с путём, например `NUXT_APP_BASE_URL=/Agro/`, задавать с `MSYS_NO_PATHCONV=1`. Перед повторной локальной сборкой на Windows удалять `apps/web/node_modules/.cache` и `apps/web/.output`.
 
 ## Правила
 
@@ -29,3 +30,13 @@
 - Не придумывать данные о компании и товарах. Моковые данные помечать как условные.
 - Не коммитить `.env` и секреты.
 - Подробнее: [docs/agents/README.md](docs/agents/README.md).
+
+## SEO (главная цель проекта, правила обязательны)
+
+- SEO страницы задаётся **только** через `usePageSeo()`. Прямые `useSeoMeta` и `useHead` в страницах запрещены (проверяет тест).
+- Каждая новая страница вносится в реестр [apps/web/app/seo/entries.ts](apps/web/app/seo/entries.ts). Индексацию, sitemap и llms.txt определяет он, руками их не правим.
+- Страницы-заглушки остаются закрытыми от индексации, пока нет содержимого.
+- Адреса без завершающего слеша, один адрес на один контент.
+- В разметке schema.org и текстах только реальные данные: без выдуманных цен, отзывов, рейтингов, характеристик.
+- Любое изменение страниц или данных каталога проверяется `pnpm generate && pnpm seo:audit`. Если аудит упал, чиним причину.
+- Правила и обоснования: [docs/specs/seo.md](docs/specs/seo.md), чек-лист: [docs/agents/seo-checklist.md](docs/agents/seo-checklist.md).

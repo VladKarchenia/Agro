@@ -1,5 +1,8 @@
 <script setup lang="ts">
-useSeoMeta({ title: 'О компании' })
+usePageSeo({
+  title: 'О компании',
+  description: 'Информация о компании АгроЭд: техника и оборудование для сельского хозяйства.',
+})
 </script>
 
 <template>

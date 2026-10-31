@@ -5,7 +5,7 @@ import { company, missingCompanyFields } from '~/data/company'
 const sections = buildPrivacyPolicy(company)
 const draft = missingCompanyFields(company).length > 0
 
-useSeoMeta({
+usePageSeo({
   title: PRIVACY_TITLE,
   description: `Как ${company.brand} обрабатывает и защищает персональные данные пользователей сайта.`,
 })

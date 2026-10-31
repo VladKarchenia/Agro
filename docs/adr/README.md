@@ -17,3 +17,4 @@
 | [0008](0008-demo-on-github-pages.md) | Демо-сайт на GitHub Pages | Принято |
 | [0009](0009-brand-palette-b.md) | Основная палитра: вариант B «хвойный и лайм» | Принято |
 | [0010](0010-cart-storage-and-order-submit.md) | Корзина в localStorage и режимы отправки заявки | Принято |
+| [0011](0011-seo-architecture.md) | SEO собственным слоем и автоматический аудит | Принято |

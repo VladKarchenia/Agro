@@ -5,7 +5,7 @@ import { company, missingCompanyFields } from '~/data/company'
 const sections = buildConsentDocument(company)
 const draft = missingCompanyFields(company).length > 0
 
-useSeoMeta({
+usePageSeo({
   title: CONSENT_TITLE,
   description: `Условия обработки персональных данных при отправке заявки на сайте ${company.brand}.`,
 })

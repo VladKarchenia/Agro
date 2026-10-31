@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getCategory, getProducts } from '~/data/catalog'
+import { collectionLd } from '~/utils/structured-data'
 
 const route = useRoute()
 const category = getCategory(String(route.params.category))
@@ -10,7 +11,26 @@ if (!category) {
 
 const products = getProducts(category.slug)
 
-useSeoMeta({ title: category.title, description: category.description })
+const { siteUrl } = useRuntimeConfig().public
+const path = `/catalog/${category.slug}`
+const description = `${category.description}. Каталог в Беларуси, цена по запросу, заказ через заявку на сайте.`
+
+usePageSeo({
+  title: `${category.title} в Беларуси: каталог`,
+  description,
+  breadcrumbs: [
+    { name: 'Каталог', path: '/catalog' },
+    { name: category.title, path },
+  ],
+  jsonLd: [
+    collectionLd(siteUrl, {
+      name: category.title,
+      description,
+      path,
+      items: products.map((product) => ({ name: product.name, path: `${path}/${product.slug}` })),
+    }),
+  ],
+})
 </script>
 
 <template>

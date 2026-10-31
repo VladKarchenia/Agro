@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getCategory, getProduct } from '~/data/catalog'
+import { productLd } from '~/utils/structured-data'
 
 const route = useRoute()
 const product = getProduct(String(route.params.product))
@@ -12,7 +13,28 @@ if (!product || !category || product.categorySlug !== route.params.category) {
 
 const quantity = ref(1)
 
-useSeoMeta({ title: product.name, description: product.summary })
+const { siteUrl } = useRuntimeConfig().public
+const path = `/catalog/${category.slug}/${product.slug}`
+// Описание всегда начинается с названия товара, поэтому не совпадает у разных товаров
+const description = `${product.name}. ${product.summary} Цена по запросу, заказ через заявку на сайте.`
+
+usePageSeo({
+  title: `${product.name}, цена по запросу`,
+  description,
+  breadcrumbs: [
+    { name: 'Каталог', path: '/catalog' },
+    { name: category.title, path: `/catalog/${category.slug}` },
+    { name: product.name, path },
+  ],
+  jsonLd: [
+    productLd(siteUrl, {
+      name: product.name,
+      description: product.summary,
+      path,
+      category: category.title,
+    }),
+  ],
+})
 </script>
 
 <template>

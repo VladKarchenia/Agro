@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   check:
-    name: Lint, typecheck, test
+    name: Lint, typecheck, test, SEO audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,36 +26,48 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
 
+      # SEO-аудит проверяет итоговый HTML, а не исходники (правила: docs/specs/seo.md).
+      # Сначала боевой режим: сайт открыт для индексации, sitemap и разметка должны быть полными.
+      - name: Build (production mode)
+        run: pnpm generate
+        env:
+          NUXT_PUBLIC_SITE_URL: https://agroed.by
+      - name: SEO audit (production mode)
+        run: node scripts/seo-audit.mjs --mode production --site-url https://agroed.by
+
+      # Затем демо: адрес как на GitHub Pages, индексация закрыта
+      - name: Compute demo URL
+        id: demo
+        run: echo "url=https://${GITHUB_REPOSITORY_OWNER,,}.github.io/${GITHUB_REPOSITORY#*/}" >> "$GITHUB_OUTPUT"
+      - name: Build (demo)
+        run: pnpm generate
+        env:
+          NITRO_PRESET: github_pages
+          NUXT_APP_BASE_URL: /${{ github.event.repository.name }}/
+          NUXT_PUBLIC_SITE_ENV: demo
+          NUXT_PUBLIC_SITE_URL: ${{ steps.demo.outputs.url }}
+      - name: SEO audit (demo)
+        run: node scripts/seo-audit.mjs --mode demo --site-url ${{ steps.demo.outputs.url }}
+
+      - name: Upload demo for GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/.output/public
+
   # Демо-сайт на GitHub Pages: статическая сборка с моковыми данными, закрыта от индексации.
   # Боевая версия будет работать как SSR на VPS (ADR-0005), Pages для неё не используется.
   deploy-demo:
     name: Deploy demo to GitHub Pages
     needs: check
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-      - uses: actions/configure-pages@v5
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm generate
-        env:
-          NITRO_PRESET: github_pages
-          NUXT_APP_BASE_URL: /${{ github.event.repository.name }}/
-          NUXT_PUBLIC_SITE_ENV: demo
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: apps/web/.output/public
       - id: deployment
         uses: actions/deploy-pages@v4

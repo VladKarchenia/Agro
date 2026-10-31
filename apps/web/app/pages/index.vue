@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { mockCategories } from '~/data/mock-categories'
+import { getCategories } from '~/data/catalog'
+import { company } from '~/data/company'
+import { organizationLd, websiteLd } from '~/utils/structured-data'
 
-useSeoMeta({
+const categories = getCategories()
+const { siteUrl } = useRuntimeConfig().public
+
+usePageSeo({
   title: 'Техника и оборудование для сельского хозяйства',
   description:
-    'АгроЭд: техника, оборудование и запчасти для сельского хозяйства. Подберём решение под вашу задачу.',
+    'АгроЭд: техника, оборудование и запчасти для сельского хозяйства в Беларуси. Цены по запросу, заявка на сайте.',
+  jsonLd: [organizationLd(siteUrl, company), websiteLd(siteUrl, company.brand)],
 })
 </script>
 
@@ -29,7 +35,7 @@ useSeoMeta({
       <h2 class="text-2xl font-extrabold md:text-3xl">Категории</h2>
       <p class="mt-2 text-sm text-ink-subtle">Названия условные, только для демо.</p>
       <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <li v-for="category in mockCategories" :key="category.slug">
+        <li v-for="category in categories" :key="category.slug">
           <NuxtLink
             :to="`/catalog/${category.slug}`"
             class="block h-full rounded-card border border-line bg-surface p-5 transition-colors hover:border-brand"

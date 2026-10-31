@@ -13,9 +13,11 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "pnpm --filter @agroed/web typecheck",
-    "test": "pnpm --filter @agroed/web test"
+    "test": "pnpm --filter @agroed/web test",
+    "seo:audit": "node scripts/seo-audit.mjs"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.3"
+    "@biomejs/biome": "^2.6.3",
+    "node-html-parser": "^9.0.6"
   }
 }

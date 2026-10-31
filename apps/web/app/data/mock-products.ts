@@ -13,6 +13,6 @@ export const mockProducts: MockProduct[] = mockCategories.flatMap((category) =>
     slug: `${category.slug}-primer-${number}`,
     categorySlug: category.slug,
     name: `${category.title}: пример ${number}`,
-    summary: 'Условный товар для демонстрации каталога и заявки.',
+    summary: `Условный товар из категории «${category.title}» для демонстрации каталога и заявки.`,
   })),
 )

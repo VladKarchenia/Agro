@@ -9,7 +9,8 @@
 | 3a | Скорлупа без Docker: монорепо, Nuxt, Tailwind, Biome, Vitest, CI, демо на GitHub Pages | ✅ | `apps/web`, ADR-0006…0008 |
 | 3b | docker-compose: PostgreSQL и Directus | ⬜ | ждём установки Docker |
 | 4 | Модель данных: категории-дерево, товары, атрибуты, фото, заказы | ⬜ | `docs/specs/data-model.md` |
-| 5 | SEO-основа: sitemap, robots, `llms.txt`, schema.org, canonical, хлебные крошки | ⬜ | `docs/specs/seo.md` |
+| 5 | SEO-основа: sitemap, robots, `llms.txt`, schema.org, canonical, хлебные крошки, аудит в CI | ✅ | `specs/seo.md`, ADR-0011 |
+| 5b | SEO-контент: семантическое ядро, реальные тексты, данные организации, фото | ⬜ | ждём данные от заказчика |
 | 6a | Корзина, карточка товара, форма заявки (клиентская часть, моковые данные) | ✅ | `specs/cart-and-order.md`, ADR-0010 |
 | 6b | Каталог: фильтры и сортировки, реальные категории | ⬜ | ждём категории и характеристики |
 | 6c | Серверный приём заявок, номер заявки, Telegram | ⬜ | ждём этап 3b (Docker) |

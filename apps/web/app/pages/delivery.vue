@@ -1,5 +1,8 @@
 <script setup lang="ts">
-useSeoMeta({ title: 'Доставка' })
+usePageSeo({
+  title: 'Доставка и оплата',
+  description: 'Как оформить заказ, оплатить и получить технику и оборудование от АгроЭд.',
+})
 </script>
 
 <template>

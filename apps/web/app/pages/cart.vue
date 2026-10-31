@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { getProduct } from '~/data/catalog'
 
-useSeoMeta({ title: 'Корзина', robots: 'noindex, nofollow' })
+usePageSeo({
+  title: 'Корзина',
+  description: 'Товары, выбранные для заявки. Оформите заявку, и менеджер свяжется с вами.',
+})
 
 const { items, ready, update, remove, clear } = useCart()
 
