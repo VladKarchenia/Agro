@@ -13,11 +13,12 @@
 - `pnpm dev`: сервер разработки
 - `pnpm lint` / `pnpm lint:fix`: Biome
 - `pnpm typecheck`: проверка типов
-- `pnpm test`: Vitest
+- `pnpm test`: Vitest (модульные тесты)
+- `pnpm test:e2e`: сквозные тесты Playwright против собранного сайта (сначала `pnpm generate`; локально с Edge: `E2E_BROWSER_CHANNEL=msedge`)
 - `pnpm generate`: статическая сборка (для демо на GitHub Pages и для SEO-аудита)
 - `pnpm seo:audit`: SEO-аудит собранного HTML (после `pnpm generate`)
 
-Перед коммитом должны проходить `lint`, `typecheck` и `test`, а при изменении страниц, данных каталога или шаблонов ещё `pnpm generate && pnpm seo:audit`.
+Перед коммитом должны проходить `lint`, `typecheck` и `test`, а при изменении страниц, данных каталога или шаблонов ещё `pnpm generate && pnpm seo:audit`. При изменении корзины, формы заявки и интерфейса запускать `pnpm test:e2e`, а новое поведение покрывать тестом в `apps/web/e2e/`.
 В Git Bash на Windows переменные с путём, например `NUXT_APP_BASE_URL=/Agro/`, задавать с `MSYS_NO_PATHCONV=1`. Перед повторной локальной сборкой на Windows удалять `apps/web/node_modules/.cache` и `apps/web/.output`.
 
 ## Правила

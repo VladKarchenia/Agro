@@ -93,6 +93,19 @@ describe('applyPhoneEdit', () => {
     expect(result).toEqual({ digits: '21', caretDigits: 1 })
   })
 
+  it('Delete перед разделителем тоже удаляет цифру, а не залипает', () => {
+    // было «(29) 1», курсор перед пробелом (позиция 4), нажали Delete: «(29)1»
+    expect(applyPhoneEdit('(29) 1', '(29)1', 4)).toEqual({ digits: '21', caretDigits: 1 })
+  })
+
+  it('тот же номер, вставленный в другой записи, не теряет цифр', () => {
+    // Регрессия: строка стала короче при тех же цифрах, и это принималось за стёртый разделитель
+    const previous = '(44) 555-66-77'
+    for (const pasted of ['375445556677', '+375 44 555-66-77', '8 044 555-66-77', '445556677']) {
+      expect(applyPhoneEdit(previous, pasted, pasted.length).digits, pasted).toBe('445556677')
+    }
+  })
+
   it('удаление последней цифры работает как обычно', () => {
     expect(applyPhoneEdit('(29) 1', '(29) ', 5)).toEqual({ digits: '29', caretDigits: 2 })
   })

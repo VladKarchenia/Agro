@@ -14,7 +14,8 @@
     "lint:fix": "biome check --write .",
     "typecheck": "pnpm --filter @agroed/web typecheck",
     "test": "pnpm --filter @agroed/web test",
-    "seo:audit": "node scripts/seo-audit.mjs"
+    "seo:audit": "node scripts/seo-audit.mjs",
+    "test:e2e": "pnpm --filter @agroed/web test:e2e"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.3",

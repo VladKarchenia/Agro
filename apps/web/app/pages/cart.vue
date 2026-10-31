@@ -82,7 +82,7 @@ function onDone(demo: boolean) {
             <button
               type="button"
               class="min-h-11 px-2 text-sm text-link underline"
-              :aria-label="`Удалить из корзины:${row.product?.name ?? row.item.slug}`"
+              :aria-label="`Удалить из корзины: ${row.product?.name ?? row.item.slug}`"
               @click="remove(row.item.slug)"
             >
               Удалить

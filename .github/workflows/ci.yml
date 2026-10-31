@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   check:
-    name: Lint, typecheck, test, SEO audit
+    name: Lint, typecheck, test, SEO audit, e2e
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +34,21 @@ jobs:
           NUXT_PUBLIC_SITE_URL: https://agroed.by
       - name: SEO audit (production mode)
         run: node scripts/seo-audit.mjs --mode production --site-url https://agroed.by
+
+      # Сквозные тесты корзины и заявки идут против той же боевой сборки, в десктопном и мобильном окне
+      - name: Install browser for e2e
+        run: pnpm --filter @agroed/web exec playwright install --with-deps chromium
+      - name: E2E tests
+        run: pnpm test:e2e
+      - name: Upload e2e report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+          retention-days: 7
 
       # Затем демо: адрес как на GitHub Pages, индексация закрыта
       - name: Compute demo URL

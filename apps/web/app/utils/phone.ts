@@ -63,8 +63,13 @@ export function applyPhoneEdit(previous: string, nextRaw: string, caret: number)
   let digits = extractNationalDigits(nextRaw)
   let caretDigits = Math.min(countDigits(nextRaw.slice(0, caret)), digits.length)
 
+  // Стёрт ровно один нецифровой символ в позиции курсора (Backspace или Delete). Одинаковые цифры
+  // при другой записи (например, вставили тот же номер без скобок) под это условие не подходят
+  const removed = previous[caret]
   const deletedSeparatorOnly =
-    nextRaw.length < previous.length && digits === extractNationalDigits(previous)
+    removed !== undefined &&
+    /\D/.test(removed) &&
+    previous.slice(0, caret) + previous.slice(caret + 1) === nextRaw
   if (deletedSeparatorOnly && caretDigits > 0) {
     digits = digits.slice(0, caretDigits - 1) + digits.slice(caretDigits)
     caretDigits -= 1
