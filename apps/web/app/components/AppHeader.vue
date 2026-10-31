@@ -7,6 +7,7 @@ const links = [
 ]
 
 const open = ref(false)
+const toggle = ref<HTMLButtonElement | null>(null)
 const route = useRoute()
 watch(
   () => route.fullPath,
@@ -14,6 +15,13 @@ watch(
     open.value = false
   },
 )
+
+// Escape закрывает меню и возвращает фокус на кнопку, как и ожидает пользователь клавиатуры
+function closeMenu() {
+  if (!open.value) return
+  open.value = false
+  toggle.value?.focus()
+}
 
 const { count, ready } = useCart()
 const showCount = computed(() => ready.value && count.value > 0)
@@ -23,7 +31,7 @@ const cartLabel = computed(() =>
 </script>
 
 <template>
-  <header class="sticky top-0 z-30 bg-dark text-on-dark">
+  <header class="sticky top-0 z-30 bg-dark text-on-dark" @keydown.esc="closeMenu">
     <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 md:h-[68px]">
       <NuxtLink to="/" aria-label="АгроЭд, на главную">
         <AppLogo tone="light" />
@@ -71,6 +79,7 @@ const cartLabel = computed(() =>
         </NuxtLink>
 
         <button
+          ref="toggle"
           type="button"
           class="grid size-11 place-items-center rounded-control text-on-dark hover:bg-dark-raised md:hidden"
           :aria-expanded="open"

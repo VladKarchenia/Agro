@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700;800&display=swap&subset=cyrillic" rel="stylesheet">
 <style>
 :root{
-  --g50:#f4f7f4;--g100:#e8eee9;--g200:#d2dcd4;--g300:#b1c0b5;--g400:#8a9c8f;--g500:#66786b;--g600:#485a4d;--g700:#32443a;--g800:#223229;--g900:#16241c;--g950:#0e1913;
+  --g50:#f4f7f4;--g100:#e8eee9;--g200:#d2dcd4;--g300:#b1c0b5;--g400:#8a9c8f;--g500:#5c6c60;--g600:#485a4d;--g700:#32443a;--g800:#223229;--g900:#16241c;--g950:#0e1913;
   --a50:#f4fae0;--a100:#e6f4b8;--a200:#d2ea82;--a300:#bee04f;--a400:#a8d02e;--a500:#8db61f;--a600:#6d9016;--a700:#4e6b10;
   --ok:#2f6f3a;--bad:#b02a2a;
   --font-h:"Manrope",system-ui,sans-serif;--font-b:"Inter",system-ui,sans-serif;
@@ -168,7 +168,7 @@ footer{background:var(--g950);color:var(--g300);padding:32px 0;font-size:14px}
 <footer><div class="wrap">© АгроЭд. Превью брендбука v0.1, вариант B: цвета, знак и шрифты временные.</div></footer>
 
 <script>
-const g=[["50","f4f7f4"],["100","e8eee9"],["200","d2dcd4"],["300","b1c0b5"],["400","8a9c8f"],["500","66786b"],["600","485a4d"],["700","32443a"],["800","223229"],["900","16241c"],["950","0e1913"]];
+const g=[["50","f4f7f4"],["100","e8eee9"],["200","d2dcd4"],["300","b1c0b5"],["400","8a9c8f"],["500","5c6c60"],["600","485a4d"],["700","32443a"],["800","223229"],["900","16241c"],["950","0e1913"]];
 const a=[["50","f4fae0"],["100","e6f4b8"],["200","d2ea82"],["300","bee04f"],["400","a8d02e"],["500","8db61f"],["600","6d9016"],["700","4e6b10"]];
 const fill=(id,name,list)=>document.getElementById(id).innerHTML=list.map(([k,h])=>`<div class="sw"><i style="background:#${h}"></i><div><b>${name}-${k}</b><span>#${h.toUpperCase()}</span></div></div>`).join("");
 fill("graphite","forest",g);fill("amber","lime",a);

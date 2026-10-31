@@ -16,10 +16,15 @@ const availableItems = computed(() =>
 
 const done = ref<{ demo: boolean } | null>(null)
 
-function onDone(demo: boolean) {
+const doneHeading = ref<HTMLElement | null>(null)
+
+async function onDone(demo: boolean) {
   done.value = { demo }
   clear()
   window.scrollTo({ top: 0 })
+  // Фокус переносим на подтверждение: форма исчезла, и без этого клавиатура «теряется» в начале страницы
+  await nextTick()
+  doneHeading.value?.focus()
 }
 </script>
 
@@ -30,7 +35,9 @@ function onDone(demo: boolean) {
     <p v-if="!ready" class="mt-8 text-ink-muted" aria-busy="true">Загружаем корзину…</p>
 
     <section v-else-if="done" class="mt-8 max-w-xl" aria-live="polite">
-      <h2 class="text-2xl font-bold">Заявка принята</h2>
+      <h2 ref="doneHeading" tabindex="-1" class="text-2xl font-bold outline-none">
+        Заявка принята
+      </h2>
       <p class="mt-3 text-ink-muted">
         Менеджер свяжется с вами, чтобы подтвердить заявку и обсудить условия.
       </p>

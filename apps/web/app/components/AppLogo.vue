@@ -17,8 +17,9 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light' }>(), { tone: 'dark' })
         <path d="M32 50Q43 50 44 39Q33 39 32 50Z" />
       </g>
     </svg>
+    <!-- Лаймовый на светлом фоне нечитаем (контраст 1.65:1), поэтому на светлом «Эд» набирается цветом ссылок -->
     <span :class="tone === 'light' ? 'text-on-dark' : 'text-ink'">
-      Агро<span class="text-brand">Эд</span>
+      Агро<span :class="tone === 'light' ? 'text-brand' : 'text-link'">Эд</span>
     </span>
   </span>
 </template>

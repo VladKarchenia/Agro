@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Product } from '~/data/catalog'
 
-defineProps<{ product: Product }>()
+// level: уровень заголовка товара. Он должен идти на единицу глубже заголовка раздела, внутри которого
+// стоит карточка (под h1 это 2, под h2 это 3), иначе ломается структура страницы для скринридеров
+withDefaults(defineProps<{ product: Product; level?: 2 | 3 }>(), { level: 2 })
 
 // Количество выбирается прямо на карточке и добавляется в корзину одним нажатием
 const quantity = ref(1)
@@ -17,11 +19,11 @@ const quantity = ref(1)
       <ProductPhoto />
     </NuxtLink>
     <div class="flex flex-1 flex-col gap-2 p-4">
-      <h3 class="text-lg font-bold">
+      <component :is="`h${level}`" class="text-lg font-bold">
         <NuxtLink :to="`/catalog/${product.categorySlug}/${product.slug}`" class="hover:underline">
           {{ product.name }}
         </NuxtLink>
-      </h3>
+      </component>
       <p class="text-ink-muted">Цена по запросу</p>
       <div class="mt-auto flex items-start gap-3 pt-2">
         <QuantityInput v-model="quantity" :label="product.name" class="shrink-0" />

@@ -8,6 +8,8 @@ useHead({
 </script>
 
 <template>
+  <!-- Озвучивает скринридеру смену страницы при переходах внутри сайта (без перезагрузки) -->
+  <NuxtRouteAnnouncer />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

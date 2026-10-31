@@ -17,7 +17,7 @@ usePageSeo({
 <template>
   <NuxtLayout>
     <div class="mx-auto max-w-6xl px-5 py-16 md:py-24">
-      <p class="font-heading text-6xl font-extrabold text-brand">{{ error.statusCode }}</p>
+      <p class="font-heading text-6xl font-extrabold text-link" aria-hidden="true">{{ error.statusCode }}</p>
       <h1 class="mt-4 text-3xl font-extrabold md:text-4xl">
         {{ is404 ? 'Страница не найдена' : 'Что-то пошло не так' }}
       </h1>
