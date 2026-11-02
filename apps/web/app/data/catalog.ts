@@ -10,6 +10,7 @@ import type { Category, Product, Subcategory, SubcategoryData } from './types'
 
 // Слой доступа к данным каталога. Сейчас данные лежат в коде, позже запросы к CMS.
 // Страницы и компоненты работают только через эти функции.
+export { getProductImages, type ProductImage, photoKeys } from './photos'
 export type {
   Category,
   ContentSection,

@@ -1,10 +1,12 @@
 import {
+  type ColorCode,
   cableSpecs,
+  colorList,
+  colorVariants,
   formatNumber,
   type Manufacturer,
   PVC,
   slugNumber,
-  WIRE_COLORS,
 } from '../builders'
 import type { Product, SubcategoryData } from '../types'
 
@@ -16,6 +18,8 @@ export interface InstallationWireInput {
   series: string
   /** Латиницей для адреса: «puv» или «pugv» */
   slugName: string
+  /** Цвета изоляции: на странице товара выбирается один из них */
+  colors: readonly ColorCode[]
   /** Значение «Класс токопроводящей жилы» */
   conductorClass: string
   /** Как жила описывается в тексте: «медной однопроволочной» */
@@ -35,7 +39,7 @@ export function installationWire(input: InstallationWireInput): Product {
   const size = `1х${formatNumber(section)}`
   const name = `Провод ${series} ${size}`
   const slug = `provod-${input.slugName}-1x${slugNumber(section)}`
-  const colors = WIRE_COLORS.map((color) => color.label).join(', ')
+  const colors = colorList(input.colors)
 
   const description = [
     `${name} — установочный провод с одной ${input.conductorText} жилой сечением ${section} мм² и изоляцией из ПВХ-пластиката, без оболочки. Выпускается в цветах: ${colors}. Цвет выбирается на этой странице.`,
@@ -52,7 +56,7 @@ export function installationWire(input: InstallationWireInput): Product {
     categorySlug: input.subcategory.categorySlug,
     subcategorySlug: input.subcategory.slug,
     name,
-    summary: `Установочный провод, медная жила ${section} мм², изоляция ПВХ, 5 цветов.`,
+    summary: `Установочный провод, медная жила ${section} мм², изоляция ПВХ, ${input.colors.length} цветов.`,
     description,
     specs: cableSpecs({
       series,
@@ -72,13 +76,7 @@ export function installationWire(input: InstallationWireInput): Product {
     }),
     brand: manufacturer?.brand,
     price: null,
-    variants: {
-      title: 'Цвет',
-      options: WIRE_COLORS.map((color) => ({
-        slug: `${slug}-${color.slug}`,
-        label: color.label,
-      })),
-    },
+    variants: colorVariants(slug, input.colors),
     sourceUrl: input.sourceUrl,
   }
 }

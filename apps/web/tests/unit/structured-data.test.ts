@@ -102,7 +102,7 @@ describe('productLd', () => {
       sku: 'A-1',
     })
     expect(ld).toMatchObject({
-      image: `${SITE}/images/b.jpg`,
+      image: [`${SITE}/images/b.jpg`],
       brand: { '@type': 'Brand', name: 'Бренд' },
       sku: 'A-1',
     })

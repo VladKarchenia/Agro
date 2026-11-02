@@ -37,3 +37,6 @@ test-results/
 
 # Резервные копии базы
 backups/
+
+# исходники фото товаров до обработки (pnpm photos), храним у себя
+photos-originals/

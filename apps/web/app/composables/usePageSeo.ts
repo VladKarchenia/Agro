@@ -27,6 +27,9 @@ export interface PageSeoInput {
   canonical?: boolean
   /** Картинка для превью ссылок, по умолчанию общая */
   image?: string
+  /** Размер и подпись картинки превью. Для общей картинки не нужны */
+  imageSize?: { width: number; height: number }
+  imageAlt?: string
 }
 
 /**
@@ -60,9 +63,9 @@ export function usePageSeo(input: PageSeoInput) {
     ogSiteName: SITE_NAME,
     ogLocale: SITE_LOCALE,
     ogImage: image,
-    ogImageWidth: 1200,
-    ogImageHeight: 630,
-    ogImageAlt: `${SITE_NAME}: техника и оборудование для сельского хозяйства`,
+    ogImageWidth: input.imageSize?.width ?? 1200,
+    ogImageHeight: input.imageSize?.height ?? 630,
+    ogImageAlt: input.imageAlt ?? `${SITE_NAME}: техника и оборудование для сельского хозяйства`,
     twitterCard: 'summary_large_image',
     twitterTitle: fullTitle,
     twitterDescription: description,

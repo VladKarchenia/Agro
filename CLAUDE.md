@@ -17,6 +17,7 @@ PostgreSQL 17 в Docker (`compose.yaml`), VPS на hoster.by. CMS и админ�
 - `pnpm test:e2e`: сквозные тесты Playwright против собранного сайта (сначала `pnpm generate`; локально с Edge: `E2E_BROWSER_CHANNEL=msedge`)
 - `pnpm generate`: статическая сборка (для демо на GitHub Pages и для SEO-аудита)
 - `pnpm seo:audit`: SEO-аудит собранного HTML (после `pnpm generate`)
+- `pnpm photos`: обработка новых фото товаров (WebP 4:3, список файлов для сайта), см. [docs/specs/content.md](docs/specs/content.md)
 
 База данных (нужен запущенный Docker Desktop): `pnpm env:init` (один раз, создаёт `.env`), `pnpm db:up`, `pnpm db:down`, `pnpm db:psql`, `pnpm db:backup`, `pnpm db:restore <файл>`. `pnpm db:reset` удаляет все данные базы. Подробности: [docs/specs/infrastructure.md](docs/specs/infrastructure.md). Пароли только в `.env`, в git он не попадает.
 

@@ -3,6 +3,7 @@ import {
   categoryPath,
   getCategory,
   getProduct,
+  getProductImages,
   getSubcategory,
   productPath,
   subcategoryPath,
@@ -34,8 +35,19 @@ const cartName = computed(() => {
   return option ? `${product.name} ${option.label}` : product.name
 })
 
+// Фото выбранного цвета: фото одного цвета другому не подставляем, без фото показывается заглушка
+const images = computed(() => getProductImages(product, variantSlug.value))
+const activeImage = ref(0)
+watch(variantSlug, () => {
+  activeImage.value = 0
+})
+const mainImage = computed(() => images.value[activeImage.value])
+
 const { siteUrl } = useRuntimeConfig().public
 const path = productPath(product)
+// Для превью ссылки и разметки берём фото цвета по умолчанию, остальные цвета у того же адреса
+const seoImages = getProductImages(product, product.variants?.options[0]?.slug)
+const firstSeoImage = seoImages[0]
 // Описание всегда начинается с названия товара, поэтому не совпадает у разных товаров
 const description = `${product.name}. ${product.summary} Цена по запросу, заказ через заявку на сайте.`
 
@@ -48,6 +60,9 @@ usePageSeo({
     { name: subcategory.title, path: subcategoryPath(subcategory) },
     { name: product.name, path },
   ],
+  image: firstSeoImage?.src,
+  imageSize: firstSeoImage && { width: firstSeoImage.width, height: firstSeoImage.height },
+  imageAlt: firstSeoImage?.alt,
   jsonLd: [
     productLd(siteUrl, {
       name: product.name,
@@ -56,6 +71,7 @@ usePageSeo({
       category: subcategory.title,
       brand: product.brand,
       properties: product.specs,
+      image: seoImages.map((image) => image.src),
     }),
   ],
 })
@@ -73,8 +89,26 @@ usePageSeo({
     />
 
     <div class="mt-6 grid gap-8 md:grid-cols-2 md:gap-12">
-      <div class="overflow-hidden rounded-card border border-line">
-        <ProductPhoto />
+      <div>
+        <div class="overflow-hidden rounded-card border border-line">
+          <ProductPhoto :image="mainImage" priority />
+        </div>
+        <ul v-if="images.length > 1" class="mt-3 flex flex-wrap gap-3" aria-label="Фотографии товара">
+          <li v-for="(image, index) in images" :key="image.src">
+            <button
+              type="button"
+              :aria-label="`Показать фото ${index + 1} из ${images.length}`"
+              :aria-pressed="index === activeImage"
+              :class="[
+                'block w-20 overflow-hidden rounded-control border-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus',
+                index === activeImage ? 'border-ink' : 'border-line hover:border-line-strong',
+              ]"
+              @click="activeImage = index"
+            >
+              <ProductPhoto :image="image" compact />
+            </button>
+          </li>
+        </ul>
       </div>
 
       <div>

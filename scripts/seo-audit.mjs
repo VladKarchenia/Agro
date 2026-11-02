@@ -172,6 +172,10 @@ for (const { path, doc } of pages) {
   for (const img of doc.querySelectorAll('img')) {
     if (img.getAttribute('alt') === undefined)
       error(at, `<img> без alt: ${img.getAttribute('src')}`)
+    // фото товара должно лежать в сборке: иначе на странице будет битая картинка
+    const imagePath = internalPath(img.getAttribute('src'))
+    if (imagePath && !existsSync(join(DIR, imagePath)))
+      error(at, `<img> ведёт на файл, которого нет в сборке: ${imagePath}`)
   }
 
   // Структурированные данные

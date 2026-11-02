@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { type Product, productPath } from '~/data/catalog'
+import { getProductImages, type Product, productPath } from '~/data/catalog'
 
 // level: уровень заголовка товара. Он должен идти на единицу глубже заголовка раздела, внутри которого
 // стоит карточка (под h1 это 2, под h2 это 3), иначе ломается структура страницы для скринридеров
-withDefaults(defineProps<{ product: Product; level?: 2 | 3 }>(), { level: 2 })
+const props = withDefaults(defineProps<{ product: Product; level?: 2 | 3 }>(), { level: 2 })
+
+// В списке показываем первое фото (у товара с цветами: первого цвета, у которого оно есть)
+const image = computed(() => getProductImages(props.product)[0])
 
 // Количество выбирается прямо на карточке и добавляется в корзину одним нажатием
 const quantity = ref(1)
@@ -12,7 +15,7 @@ const quantity = ref(1)
 <template>
   <article class="flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface">
     <NuxtLink :to="productPath(product)" tabindex="-1" aria-hidden="true">
-      <ProductPhoto />
+      <ProductPhoto :image="image" />
     </NuxtLink>
     <div class="flex flex-1 flex-col gap-2 p-4">
       <component :is="`h${level}`" class="text-lg font-bold">

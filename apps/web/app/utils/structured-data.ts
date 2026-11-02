@@ -75,8 +75,8 @@ export interface ProductLdInput {
   category?: string
   sku?: string
   brand?: string
-  /** Адрес реального фото товара (путь или абсолютный URL). Без реального фото поле не заполняем */
-  image?: string
+  /** Адреса реальных фото товара (путь или абсолютный URL). Без реального фото поле не заполняем */
+  image?: string | string[]
   /** Реальные характеристики товара: попадают в разметку как additionalProperty */
   properties?: { name: string; value: string }[]
 }
@@ -84,6 +84,9 @@ export interface ProductLdInput {
 // Цену, наличие и отзывы не выдумываем: Product без offers корректен, но не даёт расширенного сниппета
 export function productLd(siteUrl: string, input: ProductLdInput): JsonLd {
   const url = absoluteUrl(siteUrl, input.path)
+  const images = [input.image ?? []]
+    .flat()
+    .map((image) => (/^https?:\/\//.test(image) ? image : absoluteUrl(siteUrl, image)))
   return compact({
     '@context': CONTEXT,
     '@type': 'Product',
@@ -101,11 +104,7 @@ export function productLd(siteUrl: string, input: ProductLdInput): JsonLd {
           value: property.value,
         }))
       : undefined,
-    image: input.image
-      ? /^https?:\/\//.test(input.image)
-        ? input.image
-        : absoluteUrl(siteUrl, input.image)
-      : undefined,
+    image: images.length > 0 ? images : undefined,
   })
 }
 

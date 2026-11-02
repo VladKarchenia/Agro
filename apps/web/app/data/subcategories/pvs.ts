@@ -1,8 +1,21 @@
-import { AVTOPROVOD, cableSpecs, formatNumber, PVC, slugNumber } from '../builders'
+import {
+  AVTOPROVOD,
+  type ColorCode,
+  cableSpecs,
+  colorList,
+  colorVariants,
+  formatNumber,
+  PVC,
+  slugNumber,
+} from '../builders'
 import type { Product, SubcategoryData } from '../types'
 
 // Факты о товарах: страницы elswi.by (см. sourceUrl). Определения марок и параметры эксплуатации:
 // каталог ОАО «Щучинский завод «Автопровод». Тексты пишем поверх фактов (docs/specs/content.md).
+// Цвета оболочки: у каждого есть фото с таким же окончанием имени файла (белых фото больше, чем чёрных)
+const COLORS: ColorCode[] = ['belyi', 'chernyi']
+const colorsText = colorList(COLORS)
+
 const subcategory: SubcategoryData['subcategory'] = {
   slug: 'provod-pvs',
   categorySlug: 'kabel-provod',
@@ -13,7 +26,7 @@ const subcategory: SubcategoryData['subcategory'] = {
     'Соединительный медный провод ПВС для электроприборов и удлинителей: сечения от 0,75 до 6 мм², 2, 3 и 5 жил. Цена по запросу, заказ через заявку.',
   intro: [
     'ПВС — соединительный провод со скрученными гибкими медными жилами, изоляцией и оболочкой из ПВХ-пластиката. Его применяют для присоединения установок бытового назначения, электроприборов, электроинструментов, машин и приборов бытового и аналогичного применения, а также для изготовления шнуров удлинительных к электрической сети номинальным переменным напряжением до 380 В.',
-    'В каталоге представлены двухжильные провода и провода с жёлто-зелёной защитной жилой. Ниже — расшифровка маркировки, параметры, советы по выбору и список типоразмеров для заказа.',
+    `Провод выпускается в цветах оболочки: ${colorsText}. Цвет выбирается на странице товара. В каталоге представлены двухжильные провода и провода с жёлто-зелёной защитной жилой. Ниже — расшифровка маркировки, параметры, советы по выбору и список типоразмеров для заказа.`,
   ],
   sections: [
     {
@@ -51,7 +64,7 @@ const subcategory: SubcategoryData['subcategory'] = {
         'температура окружающей среды при эксплуатации: от −40 до +40 °С;',
         'максимальная температура токопроводящей жилы при эксплуатации: +70 °С;',
         'срок службы: не менее 6 лет;',
-        'цвет оболочки: белый;',
+        `цвета оболочки: ${colorsText};`,
         'гарантийный срок: 2 года.',
       ],
     },
@@ -84,6 +97,10 @@ const subcategory: SubcategoryData['subcategory'] = {
         'По определению завода-изготовителя, ПВС-Т — гибкий облегчённый провод, а ПВС-ТS предназначен для стационарной прокладки.',
     },
     {
+      question: 'Можно ли выбрать цвет провода?',
+      answer: `Да, на странице каждого типоразмера есть выбор цвета: ${colorList(COLORS, 'или')}. Выбранный цвет попадёт в корзину и заявку.`,
+    },
+    {
       question: 'Почему на сайте нет цены?',
       answer:
         'Цены на сайте не публикуются, у каждого товара указано «Цена по запросу». Добавьте нужные позиции в корзину и отправьте заявку, менеджер свяжется с вами.',
@@ -114,7 +131,8 @@ function pvs(input: Input): Product {
   const s = formatNumber(section)
   const layout = `${main}х${s}${earth ? `+1х${s}` : ''}`
   const series = stationary ? 'ПВС-ТS' : 'ПВС-Т'
-  const name = `Провод ${series} ${layout} белый`
+  const name = `Провод ${series} ${layout}`
+  const slug = `provod-pvs-${stationary ? 'ts' : 't'}-${main}x${slugNumber(section)}${earth ? `-1x${slugNumber(section)}` : ''}`
 
   const description = [
     `${name} — соединительный провод с гибкими медными жилами, изоляцией и оболочкой из ПВХ-пластиката. Число жил — ${cores}, сечение жилы — ${s} мм², номинальное напряжение — до 380 В.`,
@@ -124,12 +142,13 @@ function pvs(input: Input): Product {
     stationary
       ? 'Исполнение ПВС-ТS предназначено для стационарной прокладки.'
       : 'Исполнение ПВС-Т — гибкий облегчённый провод.',
+    `Провод выпускается в цветах оболочки: ${colorsText}. Цвет выбирается на этой странице.`,
     'Провод предназначен для присоединения установок бытового назначения, электроприборов, электроинструментов, машин и приборов бытового и аналогичного применения и для изготовления шнуров удлинительных к электрической сети.',
     `Провод выпускает ${AVTOPROVOD.legalName}, страна происхождения — Беларусь, гарантийный срок — 2 года. Наружный диаметр — ${outerDiameter} мм.`,
   ]
 
   return {
-    slug: `provod-pvs-${stationary ? 'ts' : 't'}-${main}x${slugNumber(section)}${earth ? `-1x${slugNumber(section)}` : ''}-belyj`,
+    slug,
     categorySlug: subcategory.categorySlug,
     subcategorySlug: subcategory.slug,
     name,
@@ -146,7 +165,7 @@ function pvs(input: Input): Product {
       shape: 'Круглый',
       insulation: PVC,
       sheath: PVC,
-      color: { name: 'Цвет оболочки', value: 'Белый' },
+      color: { name: 'Цвета оболочки', value: colorList(COLORS) },
       noFlame: false,
       lowSmoke: false,
       outerDiameter: `${outerDiameter} мм`,
@@ -154,6 +173,7 @@ function pvs(input: Input): Product {
     }),
     brand: AVTOPROVOD.brand,
     price: null,
+    variants: colorVariants(slug, COLORS),
     sourceUrl: input.sourceUrl,
   }
 }

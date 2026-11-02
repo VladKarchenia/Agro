@@ -6,6 +6,7 @@ import {
   cartLink,
   FIRST_PRODUCT,
   open,
+  openWithCart,
   productCard,
   readCart,
   SECOND_PRODUCT,
@@ -97,7 +98,7 @@ test.describe('Каталог: выбор цвета провода', () => {
     await colors.getByText('синий', { exact: true }).click()
     await page.getByRole('button', { name: /^В корзину/ }).click()
 
-    expect(await readCart(page)).toEqual([{ slug: `${COLOR_PRODUCT.slug}-sinij`, quantity: 1 }])
+    expect(await readCart(page)).toEqual([{ slug: `${COLOR_PRODUCT.slug}-siniy`, quantity: 1 }])
     await expect(cartLink(page)).toHaveAccessibleName('Корзина, позиций: 1')
 
     await open(page, '/cart')
@@ -113,8 +114,8 @@ test.describe('Каталог: выбор цвета провода', () => {
     await page.getByRole('button', { name: /^В корзину/ }).click()
 
     expect(await readCart(page)).toEqual([
-      { slug: `${COLOR_PRODUCT.slug}-belyj`, quantity: 1 },
-      { slug: `${COLOR_PRODUCT.slug}-krasnyj`, quantity: 1 },
+      { slug: `${COLOR_PRODUCT.slug}-belyi`, quantity: 1 },
+      { slug: `${COLOR_PRODUCT.slug}-krasnyi`, quantity: 1 },
     ])
   })
 
@@ -122,6 +123,79 @@ test.describe('Каталог: выбор цвета провода', () => {
     await open(page, COLOR_PRODUCT.path)
     await page.getByRole('radio', { name: 'белый' }).focus()
     await page.keyboard.press('ArrowRight')
-    await expect(page.getByRole('radio', { name: 'синий' })).toBeChecked()
+    await expect(page.getByRole('radio', { name: 'чёрный' })).toBeChecked()
+  })
+})
+
+test.describe('Каталог: фото товаров', () => {
+  const loaded = (page: import('@playwright/test').Page, selector: string) =>
+    page.locator(selector).evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)
+
+  test('на странице товара фото загружается, подпись равна названию, заглушки нет', async ({
+    page,
+  }) => {
+    await open(page, FIRST_PRODUCT.path)
+    const photo = page.getByRole('main').getByRole('img', { name: FIRST_PRODUCT.name })
+    await expect(photo).toBeVisible()
+    await expect(photo).toHaveAttribute('src', /\/images\/products\/kabel-avbbshv\/.+\.webp$/)
+    expect(await loaded(page, `img[alt="${FIRST_PRODUCT.name}"]`)).toBe(true)
+    await expect(page.getByRole('img', { name: 'Фото появится позже' })).toHaveCount(0)
+  })
+
+  test('карточки в списке подкатегории показывают фото', async ({ page }) => {
+    await open(page, SUBCATEGORY_PATH)
+    await expect(page.getByRole('article').locator('img')).toHaveCount(4)
+  })
+
+  test('если у товара несколько фото, кнопки миниатюр переключают главное', async ({ page }) => {
+    await open(page, SECOND_PRODUCT.path)
+    const thumbs = page.getByRole('list', { name: 'Фотографии товара' }).getByRole('button')
+    await expect(thumbs).toHaveCount(2)
+    await expect(thumbs.first()).toHaveAttribute('aria-pressed', 'true')
+
+    await thumbs.nth(1).click()
+    await expect(thumbs.nth(1)).toHaveAttribute('aria-pressed', 'true')
+    await expect(
+      page
+        .getByRole('main')
+        .getByRole('img', { name: `${SECOND_PRODUCT.name}, фото 2`, exact: true }),
+    ).toHaveCount(2) // главное фото и миниатюра
+  })
+
+  test('при смене цвета меняется фото и подпись', async ({ page }) => {
+    await open(page, COLOR_PRODUCT.path)
+    const photo = page.getByRole('main').locator('img').first()
+    await expect(photo).toHaveAttribute('alt', `${COLOR_PRODUCT.name} белый`)
+    const white = await photo.getAttribute('src')
+
+    await page.getByRole('group', { name: 'Цвет' }).getByText('синий', { exact: true }).click()
+    await expect(photo).toHaveAttribute('alt', `${COLOR_PRODUCT.name} синий`)
+    expect(await photo.getAttribute('src')).not.toBe(white)
+  })
+
+  test('если фото выбранного цвета нет, показывается заглушка, а не фото другого цвета', async ({
+    page,
+  }) => {
+    await open(page, `${CATEGORY_PATH}/provod-pvs/provod-pvs-t-4x4-1x4`)
+    await expect(page.getByRole('main').locator('img').first()).toHaveAttribute('alt', /белый/)
+
+    await page.getByRole('group', { name: 'Цвет' }).getByText('чёрный', { exact: true }).click()
+    await expect(page.getByRole('img', { name: 'Фото появится позже' })).toBeVisible()
+    await expect(page.getByRole('main').locator('img')).toHaveCount(0)
+  })
+
+  test('в корзине у позиции с цветом фото этого цвета', async ({ page }) => {
+    await openWithCart(page, [{ slug: `${COLOR_PRODUCT.slug}-siniy`, quantity: 1 }])
+    await expect(
+      page.getByRole('main').getByRole('img', { name: `${COLOR_PRODUCT.name} синий` }),
+    ).toBeVisible()
+  })
+
+  test('превью ссылки на товар использует его фото', async ({ page }) => {
+    await open(page, FIRST_PRODUCT.path)
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      'content',
+      /\/images\/products\/kabel-avbbshv\/.+\.webp$/,
+    )
   })
 })

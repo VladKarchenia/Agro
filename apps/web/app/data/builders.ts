@@ -120,11 +120,30 @@ export const CORE_USE = {
   5: 'Пятижильное исполнение предназначено для трёхфазных сетей с раздельными нулевым и защитным проводниками.',
 } as const
 
-/** Цвета изоляции установочных проводов ПуВ и ПуГВ: на странице товара выбирается один из них */
-export const WIRE_COLORS = [
-  { label: 'белый', slug: 'belyj' },
-  { label: 'синий', slug: 'sinij' },
-  { label: 'красный', slug: 'krasnyj' },
-  { label: 'зелёный', slug: 'zelenyj' },
-  { label: 'жёлто-зелёный', slug: 'zhelto-zelenyj' },
-] as const
+/** Цвета проводов. Ключ совпадает с окончанием имени файла фото: `provod-puv-1x4-siniy.webp` */
+export const WIRE_COLORS = {
+  belyi: 'белый',
+  chernyi: 'чёрный',
+  krasnyi: 'красный',
+  siniy: 'синий',
+  zelenyi: 'зелёный',
+  zheltyi: 'жёлтый',
+  'zhelto-zelenyi': 'жёлто-зелёный',
+} as const
+
+export type ColorCode = keyof typeof WIRE_COLORS
+
+/** «белый, синий и жёлто-зелёный» для текстов */
+export function colorList(codes: readonly ColorCode[], conjunction = 'и'): string {
+  const labels = codes.map((code) => WIRE_COLORS[code])
+  if (labels.length < 2) return labels.join('')
+  return `${labels.slice(0, -1).join(', ')} ${conjunction} ${labels.at(-1)}`
+}
+
+/** Выбор цвета на странице товара: у каждого цвета свой slug (в корзину идёт он) */
+export function colorVariants(slug: string, codes: readonly ColorCode[]) {
+  return {
+    title: 'Цвет',
+    options: codes.map((code) => ({ slug: `${slug}-${code}`, label: WIRE_COLORS[code] })),
+  }
+}

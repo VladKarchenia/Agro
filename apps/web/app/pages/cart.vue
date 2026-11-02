@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCartEntry, productPath } from '~/data/catalog'
+import { getCartEntry, getProductImages, productPath } from '~/data/catalog'
 
 usePageSeo({
   title: 'Корзина',
@@ -64,7 +64,7 @@ async function onDone(demo: boolean) {
         <ul class="mt-4 divide-y divide-line rounded-card border border-line bg-surface">
           <li v-for="row in rows" :key="row.item.slug" class="flex flex-wrap items-center gap-4 p-4">
             <div class="w-20 shrink-0 overflow-hidden rounded-control">
-              <ProductPhoto compact />
+              <ProductPhoto compact :image="row.entry ? getProductImages(row.entry.product, row.entry.slug)[0] : undefined" />
             </div>
             <div class="min-w-0 flex-1 basis-40">
               <NuxtLink

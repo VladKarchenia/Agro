@@ -1,3 +1,5 @@
+import { readdirSync } from 'node:fs'
+import { join, relative, sep } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
   categoryPath,
@@ -6,12 +8,15 @@ import {
   getCategories,
   getCategory,
   getProduct,
+  getProductImages,
   getProducts,
   getSubcategories,
   getSubcategory,
+  photoKeys,
   productPath,
   subcategoryPath,
 } from '../../app/data/catalog'
+import { PHOTO_FILES } from '../../app/data/photo-files'
 import { getCatalogPaths } from '../../app/seo/entries'
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
@@ -71,14 +76,33 @@ describe('каталог', () => {
 describe('позиции корзины и исполнения (цвета)', () => {
   const withColors = products.find((product) => product.variants)
 
-  it('у проводов ПуВ и ПуГВ пять цветов на выбор', () => {
-    const colored = products.filter((product) => product.variants)
-    expect(colored.length).toBeGreaterThan(0)
-    for (const product of colored) {
+  it('цвета на выбор: ПуВ пять, ПуГВ семь, ПВС два, у остальных товаров цветов нет', () => {
+    const counts: Record<string, number> = {}
+    for (const product of products) {
+      const count = product.variants?.options.length ?? 0
+      counts[product.subcategorySlug] ??= count
+      expect(count, product.slug).toBe(counts[product.subcategorySlug])
+    }
+    expect(counts).toMatchObject({
+      'kabel-avbbshv': 0,
+      'kabel-avvg': 0,
+      'kabel-vvgng-ls': 0,
+      'provod-pv-1-puv': 5,
+      'provod-pv-3-pugv': 7,
+      'provod-pvs': 2,
+      'provod-sip': 0,
+    })
+  })
+
+  it('у ПВС цвета белый и чёрный, а цвет не входит в название и адрес товара', () => {
+    const pvs = getProducts('kabel-provod', 'provod-pvs')
+    for (const product of pvs) {
       expect(
         product.variants?.options.map((option) => option.label),
         product.slug,
-      ).toEqual(['белый', 'синий', 'красный', 'зелёный', 'жёлто-зелёный'])
+      ).toEqual(['белый', 'чёрный'])
+      expect(product.name.toLowerCase(), product.slug).not.toMatch(/белый|чёрный/)
+      expect(product.slug, product.slug).not.toMatch(/belyi|chernyi/)
     }
   })
 
@@ -168,6 +192,86 @@ describe('наполнение товаров', () => {
         expect(titles.has(subcategory.seoTitle), subcategory.slug).toBe(false)
         titles.add(subcategory.seoTitle)
       }
+    }
+  })
+})
+
+describe('фото товаров', () => {
+  const root = join(__dirname, '..', '..', 'public', 'images', 'products')
+  const walk = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+      entry.isDirectory() ? walk(join(dir, entry.name)) : [join(dir, entry.name)],
+    )
+  const onDisk = walk(root)
+    .filter((file) => /\.(webp|jpe?g|png)$/i.test(file))
+    .map((file) => relative(root, file).split(sep).join('/'))
+    .sort()
+
+  it('список фото для сайта совпадает с папкой, лишних форматов и необработанных файлов нет', () => {
+    // Если тест упал: запустите pnpm photos
+    expect(onDisk).toEqual(Object.keys(PHOTO_FILES).sort())
+  })
+
+  it('каждое фото лежит в папке своей подкатегории и называется по товару или его цвету', () => {
+    const keys = photoKeys(products)
+    for (const file of Object.keys(PHOTO_FILES)) {
+      const key = file.replace(/\.webp$/, '')
+      const base = key.replace(/-\d+$/, '')
+      expect(keys.has(key) || keys.has(base), file).toBe(true)
+    }
+  })
+
+  it('все фото 4:3 и не шире 1200 px', () => {
+    for (const [file, [width, height]] of Object.entries(PHOTO_FILES)) {
+      expect(Math.abs(width / height - 4 / 3), file).toBeLessThan(0.01)
+      expect(width, file).toBeLessThanOrEqual(1200)
+    }
+  })
+
+  it('дополнительные кадры идут подряд: после -2 не бывает пропуска перед -3', () => {
+    for (const file of Object.keys(PHOTO_FILES)) {
+      const match = file.match(/^(.*)-(\d+)\.webp$/)
+      const number = match?.[2]
+      // адрес товара сам может оканчиваться цифрой (…-2-5), это не номер кадра
+      const isProductKey = photoKeys(products).has(file.replace(/.webp$/, ''))
+      if (match && number && !isProductKey && Number(number) > 2) {
+        expect(PHOTO_FILES[`${match[1]}-${Number(number) - 1}.webp`], file).toBeDefined()
+      }
+    }
+  })
+
+  it('getProductImages: у обычного товара фото по порядку, alt содержит название', () => {
+    const withGallery = products.find(
+      (product) => !product.variants && getProductImages(product).length > 1,
+    )
+    expect(withGallery).toBeDefined()
+    const images = withGallery ? getProductImages(withGallery) : []
+    expect(images[0]?.alt).toBe(withGallery?.name)
+    expect(images[1]?.alt).toBe(`${withGallery?.name}, фото 2`)
+    expect(images[0]?.src).toMatch(/^\/images\/products\/.+\.webp$/)
+  })
+
+  it('getProductImages: у товара с цветами фото берётся по выбранному цвету и не подменяется другим', () => {
+    const colored = products.filter((product) => product.variants)
+    expect(colored.length).toBeGreaterThan(0)
+    for (const product of colored) {
+      for (const option of product.variants?.options ?? []) {
+        const images = getProductImages(product, option.slug)
+        const expected = PHOTO_FILES[`${product.subcategorySlug}/${option.slug}.webp`]
+        expect(images.length > 0, `${option.slug}`).toBe(Boolean(expected))
+        if (images[0]) expect(images[0].alt, option.slug).toBe(`${product.name} ${option.label}`)
+      }
+    }
+  })
+
+  it('у ПВС чёрного цвета в списке нет фото там, где его не прислали: заглушка, а не фото белого', () => {
+    const missing = getProducts('kabel-provod', 'provod-pvs').filter(
+      (product) => getProductImages(product, `${product.slug}-chernyi`).length === 0,
+    )
+    for (const product of missing) {
+      expect(getProductImages(product, `${product.slug}-chernyi`)).toEqual([])
+      // но в списке (без выбранного цвета) показывается фото белого
+      expect(getProductImages(product).length, product.slug).toBeGreaterThan(0)
     }
   })
 })
