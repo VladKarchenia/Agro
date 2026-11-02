@@ -1,4 +1,11 @@
-import { getCategories, getProducts } from '../data/catalog'
+import {
+  categoryPath,
+  getCategories,
+  getProducts,
+  getSubcategories,
+  productPath,
+  subcategoryPath,
+} from '../data/catalog'
 import { normalizePath } from '../utils/seo'
 
 // Единый реестр страниц для SEO: sitemap, robots, llms.txt, мета-теги `robots` и проверки в CI
@@ -30,11 +37,14 @@ export function findStaticPage(path: string): StaticPage | undefined {
   return STATIC_PAGES.find((page) => page.path === normalized)
 }
 
-/** Динамические страницы каталога: категории и товары. Позже данные придут из CMS */
+/** Динамические страницы каталога: категории, подкатегории и товары. Позже данные придут из CMS */
 export function getCatalogPaths(): string[] {
   return getCategories().flatMap((category) => [
-    `/catalog/${category.slug}`,
-    ...getProducts(category.slug).map((product) => `/catalog/${category.slug}/${product.slug}`),
+    categoryPath(category),
+    ...getSubcategories(category.slug).flatMap((subcategory) => [
+      subcategoryPath(subcategory),
+      ...getProducts(category.slug, subcategory.slug).map(productPath),
+    ]),
   ])
 }
 

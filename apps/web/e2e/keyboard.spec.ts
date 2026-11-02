@@ -1,6 +1,13 @@
 import type { Locator } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { cartLink, open, openWithCart, productCard } from './helpers'
+import {
+  cartLink,
+  FIRST_PRODUCT,
+  open,
+  openWithCart,
+  productCard,
+  SUBCATEGORY_PATH,
+} from './helpers'
 
 // Проверки для людей, которые работают только с клавиатурой или скринридером.
 // Автоматический анализ axe (a11y.spec.ts) этого не покрывает.
@@ -29,13 +36,13 @@ test.describe('Доступность: клавиатура', () => {
   })
 
   test('у элементов управления в фокусе есть видимая обводка', async ({ page }) => {
-    await open(page, '/catalog/uborka')
-    const card = productCard(page, 'Уборка урожая: пример 1')
+    await open(page, SUBCATEGORY_PATH)
+    const card = productCard(page, FIRST_PRODUCT.name)
 
     for (const control of [
       card.getByRole('button', { name: 'Увеличить количество' }),
       card.getByRole('button', { name: /^В корзину/ }),
-      card.getByRole('link', { name: 'Уборка урожая: пример 1' }),
+      card.getByRole('link', { name: FIRST_PRODUCT.name }),
       cartLink(page),
     ]) {
       await control.focus()
@@ -44,7 +51,7 @@ test.describe('Доступность: клавиатура', () => {
   })
 
   test('поле телефона показывает обводку на всей группе с кодом страны', async ({ page }) => {
-    await openWithCart(page, [{ slug: 'uborka-primer-1', quantity: 1 }])
+    await openWithCart(page, [{ slug: FIRST_PRODUCT.slug, quantity: 1 }])
     const phone = page.getByLabel(/^Телефон/)
     await phone.focus()
 
@@ -57,10 +64,10 @@ test.describe('Доступность: клавиатура', () => {
   })
 
   test('полный путь заявки только с клавиатуры', async ({ page }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
 
     // Добавляем товар: фокус на кнопку, Enter
-    const add = productCard(page, 'Уборка урожая: пример 1').getByRole('button', {
+    const add = productCard(page, FIRST_PRODUCT.name).getByRole('button', {
       name: /^В корзину/,
     })
     await add.focus()
@@ -101,7 +108,7 @@ test.describe('Доступность: клавиатура', () => {
   test('после ошибки фокус на первом неверном поле, а ошибка связана с полем для скринридера', async ({
     page,
   }) => {
-    await openWithCart(page, [{ slug: 'uborka-primer-1', quantity: 1 }])
+    await openWithCart(page, [{ slug: FIRST_PRODUCT.slug, quantity: 1 }])
     const submit = page.getByRole('button', { name: 'Отправить заявку' })
     await submit.focus()
     await page.keyboard.press('Enter')
@@ -143,7 +150,7 @@ test.describe('Доступность: скринридер', () => {
   })
 
   test('иконки декоративные и скрыты, а кнопки без текста имеют имя', async ({ page }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     // Любая кнопка и ссылка на странице должна иметь доступное имя
     const unnamed = await page.evaluate(() => {
       const bad: string[] = []

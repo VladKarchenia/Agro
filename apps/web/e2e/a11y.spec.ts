@@ -1,7 +1,15 @@
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { open, openWithCart } from './helpers'
+import {
+  CATEGORY_PATH,
+  COLOR_PRODUCT,
+  FIRST_PRODUCT,
+  open,
+  openWithCart,
+  SECOND_PRODUCT,
+  SUBCATEGORY_PATH,
+} from './helpers'
 
 // Автоматическая проверка доступности по WCAG 2.2 уровня AA (плюс рекомендации axe).
 // Автоматика находит лишь часть проблем (контраст, подписи, роли, структура), поэтому дополняем её
@@ -26,16 +34,18 @@ async function scan(page: Page) {
 const PAGES: [string, string][] = [
   ['главная', '/'],
   ['каталог', '/catalog'],
-  ['категория', '/catalog/uborka'],
-  ['товар', '/catalog/uborka/uborka-primer-1'],
+  ['категория', CATEGORY_PATH],
+  ['подкатегория', SUBCATEGORY_PATH],
+  ['товар', FIRST_PRODUCT.path],
+  ['товар с выбором цвета', COLOR_PRODUCT.path],
   ['политика', '/privacy'],
   ['согласие', '/consent'],
   ['заглушка', '/about'],
 ]
 
 const CART = [
-  { slug: 'uborka-primer-1', quantity: 2 },
-  { slug: 'zapchasti-primer-2', quantity: 1 },
+  { slug: FIRST_PRODUCT.slug, quantity: 2 },
+  { slug: SECOND_PRODUCT.slug, quantity: 1 },
 ]
 
 test.describe('Доступность: автоматический анализ (axe)', () => {

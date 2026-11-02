@@ -1,11 +1,21 @@
 import { expect, test } from './fixtures'
-import { open, openWithCart } from './helpers'
+import {
+  CATEGORY_PATH,
+  COLOR_PRODUCT,
+  FIRST_PRODUCT,
+  open,
+  openWithCart,
+  SECOND_PRODUCT,
+  SUBCATEGORY_PATH,
+} from './helpers'
 
 const PAGES = [
   '/',
   '/catalog',
-  '/catalog/uborka',
-  '/catalog/uborka/uborka-primer-1',
+  CATEGORY_PATH,
+  SUBCATEGORY_PATH,
+  FIRST_PRODUCT.path,
+  COLOR_PRODUCT.path,
   '/privacy',
   '/consent',
   '/about',
@@ -24,8 +34,8 @@ test.describe('Раскладка', () => {
 
   test('нет горизонтального скролла в корзине с формой организации', async ({ page }) => {
     await openWithCart(page, [
-      { slug: 'uborka-primer-1', quantity: 2 },
-      { slug: 'zapchasti-primer-2', quantity: 1 },
+      { slug: FIRST_PRODUCT.slug, quantity: 2 },
+      { slug: SECOND_PRODUCT.slug, quantity: 1 },
     ])
     await page.getByText('Организация или ИП').click()
     const overflow = await page.evaluate(
@@ -42,7 +52,7 @@ test.describe('Раскладка', () => {
     // /about короткая (без скролла), /catalog/uborka длиннее окна (со скроллом)
     const positions: number[] = []
     const scrolls: boolean[] = []
-    for (const path of ['/about', '/catalog/uborka', '/catalog/zapchasti', '/']) {
+    for (const path of ['/about', SUBCATEGORY_PATH, CATEGORY_PATH, '/']) {
       await open(page, path)
       const info = await page.evaluate(() => ({
         scrolls: document.documentElement.scrollHeight > window.innerHeight,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCategories } from '~/data/catalog'
+import { categoryPath, getCategories } from '~/data/catalog'
 import { collectionLd } from '~/utils/structured-data'
 
 const categories = getCategories()
@@ -18,7 +18,7 @@ usePageSeo({
       path: '/catalog',
       items: categories.map((category) => ({
         name: category.title,
-        path: `/catalog/${category.slug}`,
+        path: categoryPath(category),
       })),
     }),
   ],
@@ -31,7 +31,7 @@ usePageSeo({
     <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="category in categories" :key="category.slug">
         <NuxtLink
-          :to="`/catalog/${category.slug}`"
+          :to="categoryPath(category)"
           class="block h-full rounded-card border border-line bg-surface p-5 transition-colors hover:border-brand"
         >
           <h2 class="text-lg font-bold">{{ category.title }}</h2>

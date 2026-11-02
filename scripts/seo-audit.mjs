@@ -207,7 +207,8 @@ for (const { path, doc } of pages) {
         error(at, 'последний пункт BreadcrumbList должен вести на саму страницу')
     }
   }
-  if (at.split('/').length === 4 && at.startsWith('/catalog/')) {
+  // /catalog/категория/подкатегория/товар: пять сегментов с пустым первым
+  if (at.split('/').length === 5 && at.startsWith('/catalog/')) {
     const products = ofType('Product')
     if (products.length !== 1) error(at, 'страница товара должна иметь ровно одну разметку Product')
     for (const product of products) {

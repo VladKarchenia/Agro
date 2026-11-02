@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { open } from './helpers'
+import { open, SUBCATEGORY_PATH } from './helpers'
 
 // Свой скроллбар включается только для мыши. На мобильном (касания) остаётся системная прокрутка.
 const THUMB = '.app-scrollbar__thumb'
@@ -21,7 +21,7 @@ test.describe('Скроллбар: мышь', () => {
   test.skip(({ isMobile }) => isMobile, 'свой скроллбар только для мыши')
 
   test('на длинной странице ползунок виден, на короткой его нет', async ({ page }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     expect(await maxScroll(page)).toBeGreaterThan(0)
     await expect(page.locator(THUMB)).toBeVisible()
 
@@ -33,7 +33,7 @@ test.describe('Скроллбар: мышь', () => {
   test('системная полоса спрятана: страница занимает всю ширину, фон шапки доходит до края', async ({
     page,
   }) => {
-    for (const path of ['/about', '/catalog/uborka']) {
+    for (const path of ['/about', SUBCATEGORY_PATH]) {
       await open(page, path)
       const sizes = await page.evaluate(() => ({
         viewport: window.innerWidth,
@@ -48,7 +48,7 @@ test.describe('Скроллбар: мышь', () => {
   })
 
   test('ползунок прижат к правому краю и не выходит за окно', async ({ page }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     const box = await thumbBox(page)
     const viewport = page.viewportSize()
     expect(box.x + box.width).toBeLessThanOrEqual(viewport?.width ?? 0)
@@ -60,7 +60,7 @@ test.describe('Скроллбар: мышь', () => {
   test('колесо мыши двигает страницу, а ползунок следует за ней до самого низа', async ({
     page,
   }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     const before = await thumbBox(page)
 
     await page.mouse.move(400, 400)
@@ -75,7 +75,7 @@ test.describe('Скроллбар: мышь', () => {
   })
 
   test('перетаскивание ползунка прокручивает страницу', async ({ page }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     const box = await thumbBox(page)
     const x = box.x + box.width / 2
     const y = box.y + box.height / 2
@@ -89,7 +89,7 @@ test.describe('Скроллбар: мышь', () => {
   })
 
   test('щелчок по свободной зоне под ползунком прокручивает на экран вниз', async ({ page }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     const box = await thumbBox(page)
     const viewport = page.viewportSize()
     const clickY = box.y + box.height + 20
@@ -100,7 +100,7 @@ test.describe('Скроллбар: мышь', () => {
   })
 
   test('клавиатура по-прежнему прокручивает страницу (End, Home, Space)', async ({ page }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     await page.mouse.click(10, 300)
 
     await page.keyboard.press('End')
@@ -112,7 +112,7 @@ test.describe('Скроллбар: мышь', () => {
   })
 
   test('ползунок скрыт от скринридера и не берёт фокус', async ({ page }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     const rail = page.locator('.app-scrollbar')
     await expect(rail).toHaveAttribute('aria-hidden', 'true')
     expect(await page.locator(`${THUMB}[tabindex]`).count()).toBe(0)
@@ -121,7 +121,7 @@ test.describe('Скроллбар: мышь', () => {
   test('при переходе на короткую страницу ползунок исчезает, на длинную появляется', async ({
     page,
   }) => {
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
     await expect(page.locator(THUMB)).toBeVisible()
 
     await page.getByRole('banner').getByRole('link', { name: 'О компании' }).click()
@@ -138,7 +138,7 @@ test.describe('Скроллбар: касание', () => {
     page,
   }, testInfo) => {
     test.skip(testInfo.project.name === 'desktop', 'только для мобильного')
-    await open(page, '/catalog/uborka')
+    await open(page, SUBCATEGORY_PATH)
 
     const enabled = await page.evaluate(() =>
       document.documentElement.classList.contains('has-custom-scrollbar'),

@@ -1,9 +1,16 @@
 import { expect, test } from './fixtures'
-import { cartLink, fillValidOrder, openWithCart, readCart } from './helpers'
+import {
+  cartLink,
+  FIRST_PRODUCT,
+  fillValidOrder,
+  openWithCart,
+  readCart,
+  SECOND_PRODUCT,
+} from './helpers'
 
 const ITEMS = [
-  { slug: 'pochvoobrabotka-primer-1', quantity: 2 },
-  { slug: 'posev-primer-2', quantity: 1 },
+  { slug: FIRST_PRODUCT.slug, quantity: 2 },
+  { slug: SECOND_PRODUCT.slug, quantity: 1 },
 ]
 
 test.describe('Форма заявки: проверка полей', () => {

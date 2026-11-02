@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getProduct } from '~/data/catalog'
+import { getCartEntry, productPath } from '~/data/catalog'
 
 usePageSeo({
   title: 'Корзина',
@@ -8,11 +8,9 @@ usePageSeo({
 
 const { items, ready, update, remove, clear } = useCart()
 
-const rows = computed(() => items.value.map((item) => ({ item, product: getProduct(item.slug) })))
+const rows = computed(() => items.value.map((item) => ({ item, entry: getCartEntry(item.slug) })))
 // В заявку попадают только товары, которые ещё есть в каталоге
-const availableItems = computed(() =>
-  rows.value.filter((row) => row.product).map((row) => row.item),
-)
+const availableItems = computed(() => rows.value.filter((row) => row.entry).map((row) => row.item))
 
 const done = ref<{ demo: boolean } | null>(null)
 
@@ -70,26 +68,26 @@ async function onDone(demo: boolean) {
             </div>
             <div class="min-w-0 flex-1 basis-40">
               <NuxtLink
-                v-if="row.product"
-                :to="`/catalog/${row.product.categorySlug}/${row.product.slug}`"
+                v-if="row.entry"
+                :to="productPath(row.entry.product)"
                 class="font-bold hover:underline"
               >
-                {{ row.product.name }}
+                {{ row.entry.name }}
               </NuxtLink>
               <p v-else class="font-bold text-ink-muted">Товар больше недоступен</p>
-              <p v-if="row.product" class="text-sm text-ink-muted">Цена по запросу</p>
+              <p v-if="row.entry" class="text-sm text-ink-muted">Цена по запросу</p>
               <p v-else class="text-sm text-danger">Он не попадёт в заявку. Удалите его из корзины.</p>
             </div>
             <QuantityInput
-              v-if="row.product"
+              v-if="row.entry"
               :model-value="row.item.quantity"
-              :label="row.product.name"
+              :label="row.entry.name"
               @update:model-value="update(row.item.slug, $event)"
             />
             <button
               type="button"
               class="min-h-11 px-2 text-sm text-link underline"
-              :aria-label="`Удалить из корзины: ${row.product?.name ?? row.item.slug}`"
+              :aria-label="`Удалить из корзины: ${row.entry?.name ?? row.item.slug}`"
               @click="remove(row.item.slug)"
             >
               Удалить

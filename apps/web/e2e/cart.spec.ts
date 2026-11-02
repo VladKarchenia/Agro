@@ -1,15 +1,25 @@
 import { expect, test } from './fixtures'
-import { cartLink, open, openWithCart, productCard, readCart, reload } from './helpers'
+import {
+  cartLink,
+  FIRST_PRODUCT,
+  open,
+  openWithCart,
+  productCard,
+  readCart,
+  reload,
+  SECOND_PRODUCT,
+  SUBCATEGORY_PATH,
+} from './helpers'
 
-const FIRST = 'Почвообработка: пример 1'
-const FIRST_SLUG = 'pochvoobrabotka-primer-1'
-const SECOND_SLUG = 'posev-primer-2'
+const FIRST = FIRST_PRODUCT.name
+const FIRST_SLUG = FIRST_PRODUCT.slug
+const SECOND_SLUG = SECOND_PRODUCT.slug
 
 test.describe('Корзина: добавление', () => {
   test('пустая корзина: в шапке нет счётчика, на странице подсказка и ссылка в каталог', async ({
     page,
   }) => {
-    await open(page, '/catalog/pochvoobrabotka')
+    await open(page, SUBCATEGORY_PATH)
     await expect(cartLink(page)).toHaveAccessibleName('Корзина, пока пусто')
 
     await open(page, '/cart')
@@ -18,7 +28,7 @@ test.describe('Корзина: добавление', () => {
   })
 
   test('на карточке выбирается количество и добавляется целиком', async ({ page }) => {
-    await open(page, '/catalog/pochvoobrabotka')
+    await open(page, SUBCATEGORY_PATH)
     const card = productCard(page, FIRST)
 
     await card.getByRole('button', { name: 'Увеличить количество' }).click()
@@ -33,7 +43,7 @@ test.describe('Корзина: добавление', () => {
   test('повторное добавление суммирует количество, а не создаёт вторую позицию', async ({
     page,
   }) => {
-    await open(page, '/catalog/pochvoobrabotka')
+    await open(page, SUBCATEGORY_PATH)
     const card = productCard(page, FIRST)
 
     await card.getByRole('button', { name: 'Увеличить количество' }).click()
@@ -45,13 +55,13 @@ test.describe('Корзина: добавление', () => {
   })
 
   test('количество нельзя опустить ниже единицы кнопкой «минус»', async ({ page }) => {
-    await open(page, '/catalog/pochvoobrabotka')
+    await open(page, SUBCATEGORY_PATH)
     const card = productCard(page, FIRST)
     await expect(card.getByRole('button', { name: 'Уменьшить количество' })).toBeDisabled()
   })
 
   test('со страницы товара добавляется выбранное количество', async ({ page }) => {
-    await open(page, `/catalog/posev/${SECOND_SLUG}`)
+    await open(page, SECOND_PRODUCT.path)
     await page.getByRole('button', { name: 'Увеличить количество' }).click()
     await page.getByRole('button', { name: /^В корзину/ }).click()
 
@@ -61,7 +71,7 @@ test.describe('Корзина: добавление', () => {
   test('корзина сохраняется после перезагрузки и при переходах между страницами', async ({
     page,
   }) => {
-    await open(page, '/catalog/pochvoobrabotka')
+    await open(page, SUBCATEGORY_PATH)
     await productCard(page, FIRST)
       .getByRole('button', { name: /^В корзину/ })
       .click()
@@ -77,9 +87,9 @@ test.describe('Корзина: добавление', () => {
   test('корзина синхронизируется между вкладками', async ({ context, page }) => {
     await open(page, '/')
     const other = await context.newPage()
-    await open(other, '/catalog/uborka')
+    await open(other, SUBCATEGORY_PATH)
 
-    await productCard(other, 'Уборка урожая: пример 1')
+    await productCard(other, SECOND_PRODUCT.name)
       .getByRole('button', { name: /^В корзину/ })
       .click()
 
@@ -101,7 +111,7 @@ test.describe('Корзина: страница', () => {
     await expect(rows.first().getByRole('textbox')).toHaveValue('3')
     await expect(rows.first().getByRole('link', { name: FIRST })).toHaveAttribute(
       'href',
-      `/catalog/pochvoobrabotka/${FIRST_SLUG}`,
+      FIRST_PRODUCT.path,
     )
     await expect(page.getByRole('heading', { name: 'Оформление заявки' })).toBeVisible()
   })
@@ -180,10 +190,10 @@ test.describe('Корзина: страница', () => {
 })
 
 test.describe('Корзина: адреса товаров', () => {
-  test('товар по адресу чужой категории даёт страницу 404', async ({ page, allowedConsole }) => {
+  test('товар по адресу чужой подкатегории даёт страницу 404', async ({ page, allowedConsole }) => {
     // Браузер и Nuxt штатно пишут в консоль о ресурсе с кодом 404
     allowedConsole.push(/404/, /NUXT_E1005/)
-    const response = await page.goto(`/catalog/posev/${FIRST_SLUG}`)
+    const response = await page.goto(`${SUBCATEGORY_PATH}-drugoj/${FIRST_SLUG}`)
     expect(response?.status()).toBe(404)
     await expect(page.getByRole('heading', { name: 'Страница не найдена' })).toBeVisible()
   })

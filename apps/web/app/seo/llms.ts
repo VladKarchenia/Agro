@@ -1,4 +1,4 @@
-import { getCategories } from '../data/catalog'
+import { categoryPath, getCategories, getSubcategories, subcategoryPath } from '../data/catalog'
 import { absoluteUrl, SITE_NAME } from '../utils/seo'
 import { STATIC_PAGES } from './entries'
 
@@ -13,9 +13,12 @@ export function buildLlmsTxt(siteUrl: string): string {
   const link = (title: string, path: string, note?: string) =>
     `- [${title}](${absoluteUrl(siteUrl, path)})${note ? `: ${note}` : ''}`
 
-  const categories = getCategories().map((category) =>
-    link(category.title, `/catalog/${category.slug}`, category.description),
-  )
+  const categories = getCategories().flatMap((category) => [
+    link(category.title, categoryPath(category), category.description),
+    ...getSubcategories(category.slug).map((subcategory) =>
+      link(subcategory.title, subcategoryPath(subcategory), subcategory.description),
+    ),
+  ])
   const pages = STATIC_PAGES.filter((page) => page.indexable && page.path !== '/').map((page) =>
     link(page.title, page.path),
   )

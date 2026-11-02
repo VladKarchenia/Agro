@@ -52,12 +52,13 @@ describe('SEO-покрытие страниц', () => {
     expect(fromFiles).toEqual(fromRegistry)
   })
 
-  it('динамические страницы известны: только каталог (категории и товары)', () => {
+  it('динамические страницы известны: только каталог (категории, подкатегории и товары)', () => {
     // Новый динамический раздел нужно добавить в getCatalogPaths/getIndexablePaths
     // (sitemap, llms.txt), после чего обновить этот список.
     expect(dynamicFiles.map(routeOf).sort()).toEqual([
       '/catalog/[category]',
-      '/catalog/[category]/[product]',
+      '/catalog/[category]/[subcategory]',
+      '/catalog/[category]/[subcategory]/[product]',
     ])
   })
 

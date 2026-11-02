@@ -1,6 +1,16 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { cartLink, open, openWithCart, productCard } from './helpers'
+import {
+  CATEGORY_PATH,
+  COLOR_PRODUCT,
+  cartLink,
+  FIRST_PRODUCT,
+  open,
+  openWithCart,
+  productCard,
+  SECOND_PRODUCT,
+  SUBCATEGORY_PATH,
+} from './helpers'
 
 // Курсор «рука» на всём, что можно нажать, и «запрещено» на недоступном. Tailwind 4 по умолчанию
 // делает у кнопок обычную стрелку, поэтому правило задано глобально (main.css) и проверяется здесь.
@@ -27,8 +37,10 @@ function wrongCursors(page: Page) {
 const PAGES = [
   '/',
   '/catalog',
-  '/catalog/uborka',
-  '/catalog/uborka/uborka-primer-1',
+  CATEGORY_PATH,
+  SUBCATEGORY_PATH,
+  FIRST_PRODUCT.path,
+  COLOR_PRODUCT.path,
   '/privacy',
   '/consent',
   '/about',
@@ -46,8 +58,8 @@ test.describe('Курсор', () => {
     page,
   }) => {
     await openWithCart(page, [
-      { slug: 'uborka-primer-1', quantity: 1 },
-      { slug: 'zapchasti-primer-2', quantity: 2 },
+      { slug: FIRST_PRODUCT.slug, quantity: 1 },
+      { slug: SECOND_PRODUCT.slug, quantity: 2 },
     ])
     expect(await wrongCursors(page)).toEqual([])
 
@@ -65,14 +77,14 @@ test.describe('Курсор', () => {
   })
 
   test('текстовые поля сохраняют текстовый курсор', async ({ page }) => {
-    await openWithCart(page, [{ slug: 'uborka-primer-1', quantity: 1 }])
+    await openWithCart(page, [{ slug: FIRST_PRODUCT.slug, quantity: 1 }])
     const cursor = await page.getByLabel('Имя').evaluate((node) => getComputedStyle(node).cursor)
     expect(['auto', 'text']).toContain(cursor)
   })
 
   test('недоступные кнопки показывают «запрещено»', async ({ page }) => {
-    await open(page, '/catalog/uborka')
-    const minus = productCard(page, 'Уборка урожая: пример 1').getByRole('button', {
+    await open(page, SUBCATEGORY_PATH)
+    const minus = productCard(page, FIRST_PRODUCT.name).getByRole('button', {
       name: 'Уменьшить количество',
     })
     await expect(minus).toBeDisabled()

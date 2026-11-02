@@ -69,9 +69,27 @@ describe('productLd', () => {
   it('не содержит цены, наличия и отзывов, которых у нас нет', () => {
     const ld = productLd(SITE, { name: 'Товар', description: 'Описание', path: '/catalog/a/b' })
     expect(ld).toMatchObject({ '@type': 'Product', name: 'Товар', url: `${SITE}/catalog/a/b` })
-    for (const key of ['offers', 'aggregateRating', 'review', 'image', 'sku', 'brand']) {
+    for (const key of [
+      'offers',
+      'aggregateRating',
+      'review',
+      'image',
+      'sku',
+      'brand',
+      'additionalProperty',
+    ]) {
       expect(ld).not.toHaveProperty(key)
     }
+  })
+
+  it('выводит характеристики как additionalProperty и пропускает пустой список', () => {
+    const base = { name: 'Товар', description: 'Описание', path: '/catalog/a/b' }
+    expect(productLd(SITE, { ...base, properties: [] })).not.toHaveProperty('additionalProperty')
+    expect(
+      productLd(SITE, { ...base, properties: [{ name: 'Сечение', value: '16 мм²' }] }),
+    ).toMatchObject({
+      additionalProperty: [{ '@type': 'PropertyValue', name: 'Сечение', value: '16 мм²' }],
+    })
   })
 
   it('добавляет изображение и бренд только когда они переданы, путь превращает в абсолютный адрес', () => {
