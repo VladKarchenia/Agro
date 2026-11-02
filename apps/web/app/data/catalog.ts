@@ -45,6 +45,10 @@ export function getSubcategories(categorySlug: string): Subcategory[] {
   return subcategories.filter((subcategory) => subcategory.categorySlug === categorySlug)
 }
 
+export function getAllSubcategories(): Subcategory[] {
+  return subcategories
+}
+
 export function getSubcategory(categorySlug: string, slug: string): Subcategory | undefined {
   return subcategories.find(
     (subcategory) => subcategory.categorySlug === categorySlug && subcategory.slug === slug,

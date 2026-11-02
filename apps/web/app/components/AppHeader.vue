@@ -7,8 +7,16 @@ const links = [
 ]
 
 const open = ref(false)
+const searchOpen = ref(false)
 const toggle = ref<HTMLButtonElement | null>(null)
 const route = useRoute()
+// Меню и строка поиска раскрываются под шапкой, поэтому открыта может быть только одна из них
+watch(open, (value) => {
+  if (value) searchOpen.value = false
+})
+watch(searchOpen, (value) => {
+  if (value) open.value = false
+})
 watch(
   () => route.fullPath,
   () => {
@@ -50,6 +58,7 @@ const cartLabel = computed(() =>
       </nav>
 
       <div class="flex items-center gap-1">
+        <SiteSearch v-model:expanded="searchOpen" class="lg:mr-3" />
         <NuxtLink
           to="/cart"
           class="relative grid size-11 place-items-center rounded-control text-on-dark hover:bg-dark-raised"

@@ -135,6 +135,7 @@
   summary,
   select,
   [role="button"],
+  [role="option"],
   input[type="checkbox"],
   input[type="radio"],
   label:has(input[type="checkbox"], input[type="radio"]) {
