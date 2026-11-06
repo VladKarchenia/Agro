@@ -43,7 +43,7 @@ describe('buildConsentDocument', () => {
   })
 
   it('оставляет пометки для незаполненных данных', () => {
-    expect(textOf(company)).toContain('[наименование организации]')
+    expect(textOf({ ...company, legalName: null })).toContain('[наименование организации]')
   })
 
   it('версия текста задана, её сохраняют вместе с заявкой', () => {

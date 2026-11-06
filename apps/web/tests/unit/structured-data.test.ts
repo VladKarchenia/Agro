@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { type Company, company } from '../../app/data/company'
+import { type Company, company, contacts } from '../../app/data/company'
 import {
   breadcrumbLd,
   collectionLd,
+  localBusinessLd,
   organizationId,
   organizationLd,
   productLd,
@@ -13,12 +14,26 @@ const SITE = 'https://agroed.by'
 
 describe('organizationLd', () => {
   it('содержит только известные данные: пустые поля не выводятся', () => {
-    const ld = organizationLd(SITE, company)
+    const ld = organizationLd(SITE, {
+      ...company,
+      legalName: null,
+      unp: null,
+      address: null,
+      email: null,
+      phone: null,
+    })
     expect(ld).toMatchObject({ '@type': 'Organization', name: 'АгроЭд', url: `${SITE}/` })
     for (const key of ['legalName', 'taxID', 'telephone', 'email', 'address']) {
       expect(ld).not.toHaveProperty(key)
     }
     expect(JSON.stringify(ld)).not.toContain('[')
+  })
+
+  it('реквизиты компании из данных проекта попадают в разметку', () => {
+    expect(organizationLd(SITE, company)).toMatchObject({
+      legalName: 'Общество с ограниченной ответственностью «Агроэд»',
+      taxID: '591753004',
+    })
   })
 
   it('добавляет реквизиты и адрес, когда они заполнены', () => {
@@ -41,6 +56,59 @@ describe('organizationLd', () => {
         addressCountry: 'BY',
       },
     })
+  })
+})
+
+describe('localBusinessLd', () => {
+  it('описывает офис: адрес, телефоны, часы работы и ссылку на карту', () => {
+    expect(localBusinessLd(SITE, company, contacts)).toMatchObject({
+      '@type': 'LocalBusiness',
+      '@id': `${SITE}/contacts#localbusiness`,
+      url: `${SITE}/contacts`,
+      parentOrganization: { '@id': organizationId(SITE) },
+      telephone: ['+375447909310', '+375156266849'],
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Минский тракт, 30, офис 7',
+        addressLocality: 'Слоним',
+        addressCountry: 'BY',
+      },
+      openingHoursSpecification: [
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          opens: '08:00',
+          closes: '17:00',
+        },
+      ],
+      hasMap: contacts.map.orgUrl,
+    })
+  })
+
+  it('выходные в часы работы не попадают в разметку', () => {
+    const ld = localBusinessLd(SITE, company, contacts) as {
+      openingHoursSpecification: { dayOfWeek: string[] }[]
+    }
+    const days = ld.openingHoursSpecification.flatMap((item) => item.dayOfWeek)
+    expect(days).not.toContain('Saturday')
+    expect(days).not.toContain('Sunday')
+  })
+
+  it('не выводит неизвестное: без почты и часов работы этих полей нет, один телефон строкой', () => {
+    const [first] = contacts.phones
+    const ld = localBusinessLd(SITE, company, {
+      ...contacts,
+      email: null,
+      hours: null,
+      phones: first ? [first] : [],
+    })
+    for (const key of ['email', 'openingHoursSpecification']) {
+      expect(ld).not.toHaveProperty(key)
+    }
+    expect(ld.telephone).toBe('+375447909310')
+    for (const key of ['aggregateRating', 'review', 'priceRange']) {
+      expect(ld).not.toHaveProperty(key)
+    }
   })
 })
 

@@ -15,6 +15,19 @@ const filled: Company = {
   policyDate: '01.01.2027',
 }
 
+/** Организация, о которой ничего не известно: проверяем пометки для незаполненных данных */
+const empty: Company = {
+  ...company,
+  legalName: null,
+  unp: null,
+  address: null,
+  email: null,
+  phone: null,
+  hostingProvider: null,
+  retentionPeriod: null,
+  policyDate: null,
+}
+
 const textOf = (sections: ReturnType<typeof buildPrivacyPolicy>) =>
   sections
     .flatMap((section) => section.blocks)
@@ -39,7 +52,7 @@ describe('buildPrivacyPolicy', () => {
   })
 
   it('оставляет пометки в квадратных скобках для незаполненных полей', () => {
-    const text = textOf(buildPrivacyPolicy(company))
+    const text = textOf(buildPrivacyPolicy(empty))
     expect(text).toContain('[наименование организации]')
     expect(text).toContain('[УНП]')
   })
@@ -57,7 +70,7 @@ describe('missingCompanyFields', () => {
   })
 
   it('перечисляет незаполненные поля', () => {
-    expect(missingCompanyFields(company)).toContain('legalName')
-    expect(missingCompanyFields(company)).not.toContain('brand')
+    expect(missingCompanyFields(empty)).toContain('legalName')
+    expect(missingCompanyFields(empty)).not.toContain('brand')
   })
 })

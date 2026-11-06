@@ -26,7 +26,7 @@ export const STATIC_PAGES: StaticPage[] = [
   { path: '/catalog', indexable: true, title: 'Каталог' },
   { path: '/about', indexable: false, title: 'О компании', reason: 'заглушка без содержимого' },
   { path: '/delivery', indexable: false, title: 'Доставка', reason: 'заглушка без содержимого' },
-  { path: '/contacts', indexable: false, title: 'Контакты', reason: 'заглушка без содержимого' },
+  { path: '/contacts', indexable: true, title: 'Контакты' },
   { path: '/privacy', indexable: true, title: 'Политика обработки персональных данных' },
   { path: '/consent', indexable: true, title: 'Согласие на обработку персональных данных' },
   { path: '/cart', indexable: false, title: 'Корзина', reason: 'личная страница пользователя' },

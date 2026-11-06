@@ -7,6 +7,7 @@
     >
       Перейти к содержимому
     </a>
+    <AppTopBar />
     <AppHeader />
     <main id="main" tabindex="-1" class="flex-1 scroll-mt-20 outline-none">
       <slot />

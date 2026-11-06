@@ -15,6 +15,11 @@ export const test = base.extend<Fixtures>({
   },
 
   page: async ({ page, allowedConsole }, use) => {
+    // Карта Яндекса на странице «Контакты» грузится сразу. Тесты не ходят во внешнюю сеть: ответ подменяем
+    await page.route(/^https:\/\/([^/]+\.)?yandex\./, (route) =>
+      route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>карта</title>' }),
+    )
+
     const problems: string[] = []
     const isAllowed = (text: string) => allowedConsole.some((pattern) => pattern.test(text))
 

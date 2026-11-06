@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { contacts, formatHours } from '~/data/company'
+
 const links = [
   { to: '/catalog', label: 'Каталог' },
   { to: '/about', label: 'О компании' },
@@ -127,6 +129,33 @@ const cartLabel = computed(() =>
       >
         {{ link.label }}
       </NuxtLink>
+
+      <!-- На телефоне в верхней полосе только первый номер, остальные контакты здесь -->
+      <div class="pt-4 text-on-dark-muted">
+        <p v-for="item in contacts.hours" :key="item.label">{{ formatHours(item) }}</p>
+        <ul class="mt-1">
+          <li v-for="phone in contacts.phones.slice(1)" :key="phone.tel">
+            <a
+              :href="`tel:${phone.tel}`"
+              class="inline-flex min-h-11 items-center font-semibold text-on-dark"
+            >
+              {{ phone.display }}
+            </a>
+          </li>
+        </ul>
+        <ul class="flex flex-wrap gap-x-5">
+          <li v-for="channel in contacts.channels" :key="channel.name">
+            <a
+              :href="channel.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex min-h-11 items-center"
+            >
+              {{ channel.name }}<span class="sr-only"> (откроется в новой вкладке)</span>
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
   </header>
 </template>

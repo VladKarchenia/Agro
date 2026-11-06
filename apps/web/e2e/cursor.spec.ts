@@ -43,6 +43,7 @@ const PAGES = [
   COLOR_PRODUCT.path,
   '/privacy',
   '/consent',
+  '/contacts',
   '/about',
 ]
 

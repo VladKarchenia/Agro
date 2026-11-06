@@ -1,4 +1,4 @@
-import type { Company } from '../data/company'
+import type { Company, Contacts } from '../data/company'
 import { absoluteUrl, normalizePath } from './seo'
 
 export type JsonLd = Record<string, unknown>
@@ -34,6 +34,51 @@ export function organizationLd(siteUrl: string, company: Company): JsonLd {
     address: company.address
       ? { '@type': 'PostalAddress', streetAddress: company.address, addressCountry: 'BY' }
       : undefined,
+    areaServed: { '@type': 'Country', name: 'Беларусь' },
+  })
+}
+
+/** Офис для посетителей. В разметку попадает только то, что известно: нет почты или часов, нет и полей */
+export function localBusinessLd(
+  siteUrl: string,
+  company: Pick<Company, 'brand'>,
+  contacts: Contacts,
+  path = '/contacts',
+): JsonLd {
+  const url = absoluteUrl(siteUrl, path)
+  const telephones = contacts.phones.map((phone) => phone.tel)
+  // Выходные в разметку не передаём: достаточно перечислить рабочие дни
+  const openingHours = (contacts.hours ?? []).flatMap((item) =>
+    item.time
+      ? [
+          {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: item.days,
+            opens: item.time.opens,
+            closes: item.time.closes,
+          },
+        ]
+      : [],
+  )
+  return compact({
+    '@context': CONTEXT,
+    '@type': 'LocalBusiness',
+    '@id': `${url}#localbusiness`,
+    name: company.brand,
+    url,
+    parentOrganization: { '@id': organizationId(siteUrl) },
+    telephone: telephones.length > 1 ? telephones : telephones[0],
+    email: contacts.email ?? undefined,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: contacts.address.street,
+      addressLocality: contacts.address.locality,
+      addressRegion: contacts.address.region,
+      postalCode: contacts.address.postalCode,
+      addressCountry: 'BY',
+    },
+    openingHoursSpecification: openingHours.length > 0 ? openingHours : undefined,
+    hasMap: contacts.map.orgUrl,
     areaServed: { '@type': 'Country', name: 'Беларусь' },
   })
 }

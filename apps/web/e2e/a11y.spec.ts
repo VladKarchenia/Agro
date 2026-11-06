@@ -40,6 +40,7 @@ const PAGES: [string, string][] = [
   ['товар с выбором цвета', COLOR_PRODUCT.path],
   ['политика', '/privacy'],
   ['согласие', '/consent'],
+  ['контакты', '/contacts'],
   ['заглушка', '/about'],
 ]
 
