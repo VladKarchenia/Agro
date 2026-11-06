@@ -2,8 +2,11 @@
 import {
   categoryPath,
   getCategory,
+  getOtherSubcategories,
   getProduct,
   getProductImages,
+  getProducts,
+  getRelatedProducts,
   getSubcategory,
   productPath,
   subcategoryPath,
@@ -27,6 +30,11 @@ if (
 }
 
 const quantity = ref(1)
+
+// Перелинковка: соседние типоразмеры и остальные разделы категории
+const related = getRelatedProducts(product)
+const sizesTotal = getProducts(product.categorySlug, product.subcategorySlug).length
+const otherSubcategories = getOtherSubcategories(subcategory)
 
 // У товара с исполнениями (цвет) в корзину уходит выбранное исполнение, а не сам товар
 const variantSlug = ref(product.variants?.options[0]?.slug ?? product.slug)
@@ -173,5 +181,42 @@ usePageSeo({
         </dl>
       </section>
     </div>
+
+    <section v-if="related.length > 0" class="mt-14" aria-labelledby="related-title">
+      <h2 id="related-title" class="text-2xl font-bold">Другие типоразмеры</h2>
+      <ul class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <li v-for="item in related" :key="item.slug">
+          <NuxtLink
+            :to="productPath(item)"
+            class="flex h-full min-h-11 items-center rounded-card border border-line bg-surface px-4 py-3 font-semibold transition-colors hover:border-brand"
+          >
+            {{ item.name }}
+          </NuxtLink>
+        </li>
+      </ul>
+      <p class="mt-4">
+        <NuxtLink
+          :to="subcategoryPath(subcategory)"
+          class="inline-flex min-h-11 items-center text-link underline"
+        >
+          Все типоразмеры раздела «{{ subcategory.title }}» ({{ sizesTotal }})
+        </NuxtLink>
+      </p>
+    </section>
+
+    <section v-if="otherSubcategories.length > 0" class="mt-14" aria-labelledby="other-title">
+      <h2 id="other-title" class="text-2xl font-bold">Ещё в категории «{{ category.title }}»</h2>
+      <ul class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <li v-for="item in otherSubcategories" :key="item.slug">
+          <NuxtLink
+            :to="subcategoryPath(item)"
+            class="block h-full rounded-card border border-line bg-surface p-5 transition-colors hover:border-brand"
+          >
+            <h3 class="text-lg font-bold">{{ item.title }}</h3>
+            <p class="mt-1 text-ink-muted">{{ item.description }}</p>
+          </NuxtLink>
+        </li>
+      </ul>
+    </section>
   </div>
 </template>

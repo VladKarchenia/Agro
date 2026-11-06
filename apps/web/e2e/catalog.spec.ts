@@ -71,6 +71,28 @@ test.describe('Каталог: навигация по уровням', () => {
     await expect(page).toHaveURL(new RegExp(`${SUBCATEGORY_PATH}$`))
   })
 
+  test('страница товара: другие типоразмеры и другие разделы категории ведут дальше', async ({
+    page,
+  }) => {
+    await open(page, FIRST_PRODUCT.path)
+    const sizes = page.getByRole('region', { name: 'Другие типоразмеры' })
+    await expect(sizes.getByRole('link', { name: SECOND_PRODUCT.name })).toBeVisible()
+    // Самого товара среди «других» нет
+    await expect(sizes.getByRole('link', { name: FIRST_PRODUCT.name, exact: true })).toHaveCount(0)
+    await expect(sizes.getByRole('link', { name: /^Все типоразмеры раздела/ })).toHaveAttribute(
+      'href',
+      SUBCATEGORY_PATH,
+    )
+
+    const others = page.getByRole('region', { name: 'Ещё в категории «Кабель и провод»' })
+    await expect(others.getByRole('heading', { level: 3 })).toHaveCount(6)
+    await expect(others.getByRole('heading', { name: 'Кабель АВБбШв' })).toHaveCount(0)
+
+    await sizes.getByRole('link', { name: SECOND_PRODUCT.name }).click()
+    await expect(page).toHaveURL(new RegExp(`${SECOND_PRODUCT.path}$`))
+    await expect(page.getByRole('heading', { level: 1, name: SECOND_PRODUCT.name })).toBeVisible()
+  })
+
   test('несуществующие категория и подкатегория дают 404', async ({ page, allowedConsole }) => {
     allowedConsole.push(/404/, /NUXT_E1005/)
     for (const path of ['/catalog/net-takoj', `${CATEGORY_PATH}/net-takoj`]) {

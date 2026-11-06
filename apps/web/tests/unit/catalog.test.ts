@@ -7,9 +7,11 @@ import {
   getCartEntry,
   getCategories,
   getCategory,
+  getOtherSubcategories,
   getProduct,
   getProductImages,
   getProducts,
+  getRelatedProducts,
   getSubcategories,
   getSubcategory,
   photoKeys,
@@ -70,6 +72,50 @@ describe('каталог', () => {
     expect(productPath({ categorySlug: 'a', subcategorySlug: 'b', slug: 'c' })).toBe(
       '/catalog/a/b/c',
     )
+  })
+})
+
+describe('перелинковка на карточке товара', () => {
+  it('другие типоразмеры: только из той же подкатегории, без самого товара и без повторов', () => {
+    for (const product of products) {
+      const related = getRelatedProducts(product)
+      const siblings = getProducts(product.categorySlug, product.subcategorySlug)
+      expect(related.length, product.slug).toBe(Math.min(8, siblings.length - 1))
+      expect(
+        related.map((item) => item.slug),
+        product.slug,
+      ).not.toContain(product.slug)
+      expect(new Set(related.map((item) => item.slug)).size, product.slug).toBe(related.length)
+      for (const item of related) {
+        expect(item.subcategorySlug, product.slug).toBe(product.subcategorySlug)
+      }
+    }
+  })
+
+  it('соседи идут по кругу, начиная со следующего за текущим', () => {
+    const siblings = getProducts('kabel-provod', 'kabel-avbbshv')
+    const [first, second, third, fourth] = siblings
+    expect(first && getRelatedProducts(first).map((item) => item.slug)).toEqual(
+      siblings.slice(1).map((item) => item.slug),
+    )
+    expect(fourth && getRelatedProducts(fourth).map((item) => item.slug)).toEqual(
+      [first, second, third].map((item) => item?.slug),
+    )
+  })
+
+  it('число соседей ограничено лимитом', () => {
+    const big = getSubcategories('kabel-provod')
+      .map((subcategory) => getProducts('kabel-provod', subcategory.slug))
+      .find((list) => list.length > 3)
+    const first = big?.[0]
+    expect(first && getRelatedProducts(first, 2)).toHaveLength(2)
+  })
+
+  it('другие подкатегории: все остальные той же категории', () => {
+    const [first] = getSubcategories('kabel-provod')
+    const others = first ? getOtherSubcategories(first) : []
+    expect(others.map((item) => item.slug)).not.toContain(first?.slug)
+    expect(others).toHaveLength(getSubcategories('kabel-provod').length - 1)
   })
 })
 

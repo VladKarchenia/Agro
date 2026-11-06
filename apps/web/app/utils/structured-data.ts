@@ -95,6 +95,24 @@ export function websiteLd(siteUrl: string, name: string): JsonLd {
   }
 }
 
+export interface FaqItem {
+  question: string
+  answer: string
+}
+
+/** Вопросы и ответы обязаны быть на самой странице: разметка только повторяет видимый текст */
+export function faqLd(items: FaqItem[]): JsonLd {
+  return {
+    '@context': CONTEXT,
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  }
+}
+
 export interface Crumb {
   name: string
   path: string

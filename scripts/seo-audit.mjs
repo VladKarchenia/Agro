@@ -227,6 +227,25 @@ for (const { path, doc } of pages) {
     }
   }
 
+  // FAQPage повторяет только то, что видно на странице: иначе разметка вводит поисковик в заблуждение
+  const faqPages = ofType('FAQPage')
+  if (faqPages.length > 1) error(at, 'на странице должна быть не больше одной разметки FAQPage')
+  for (const faq of faqPages) {
+    const questions = faq.mainEntity ?? []
+    if (questions.length === 0) error(at, 'FAQPage без вопросов')
+    // Текст берём из main: в doc.text попадает и содержимое script, то есть сама разметка
+    const main = doc.querySelector('main')
+    if (!main) error(at, 'на странице с FAQPage нет main, видимый текст проверить нельзя')
+    const visible = (main?.text ?? '').replace(/\s+/g, ' ')
+    for (const question of questions) {
+      const name = question.name?.replace(/\s+/g, ' ')
+      const answer = question.acceptedAnswer?.text?.replace(/\s+/g, ' ')
+      if (!name || !answer) error(at, 'в FAQPage у вопроса нет текста вопроса или ответа')
+      else if (!visible.includes(name) || !visible.includes(answer))
+        error(at, `вопрос из FAQPage не показан на странице: "${name}"`)
+    }
+  }
+
   // Ссылки
   for (const anchor of doc.querySelectorAll('a[href]')) {
     const href = anchor.getAttribute('href')

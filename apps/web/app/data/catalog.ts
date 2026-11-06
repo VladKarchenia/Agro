@@ -66,6 +66,22 @@ export function getAllProducts(): Product[] {
   return products
 }
 
+/**
+ * Другие типоразмеры той же подкатегории для перелинковки на карточке. Идут по кругу, начиная со
+ * следующего за текущим: у каждой карточки свой набор соседей, а не одни и те же первые товары.
+ */
+export function getRelatedProducts(product: Product, limit = 8): Product[] {
+  const siblings = getProducts(product.categorySlug, product.subcategorySlug)
+  const index = siblings.findIndex((item) => item.slug === product.slug)
+  if (index < 0) return siblings.slice(0, limit)
+  return [...siblings.slice(index + 1), ...siblings.slice(0, index)].slice(0, limit)
+}
+
+/** Остальные подкатегории той же категории: куда ещё можно перейти с карточки */
+export function getOtherSubcategories(subcategory: Subcategory): Subcategory[] {
+  return getSubcategories(subcategory.categorySlug).filter((item) => item.slug !== subcategory.slug)
+}
+
 /** Товар ищем по slug страницы: он уникален во всём каталоге */
 export function getProduct(slug: string): Product | undefined {
   return products.find((product) => product.slug === slug)

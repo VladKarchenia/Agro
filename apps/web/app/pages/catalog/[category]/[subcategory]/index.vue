@@ -7,7 +7,7 @@ import {
   productPath,
   subcategoryPath,
 } from '~/data/catalog'
-import { collectionLd } from '~/utils/structured-data'
+import { collectionLd, faqLd } from '~/utils/structured-data'
 
 const route = useRoute()
 const category = getCategory(String(route.params.category))
@@ -37,6 +37,7 @@ usePageSeo({
       path,
       items: products.map((product) => ({ name: product.name, path: productPath(product) })),
     }),
+    ...(subcategory.faq.length > 0 ? [faqLd(subcategory.faq)] : []),
   ],
 })
 </script>

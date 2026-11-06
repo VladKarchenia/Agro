@@ -3,6 +3,7 @@ import { type Company, company, contacts } from '../../app/data/company'
 import {
   breadcrumbLd,
   collectionLd,
+  faqLd,
   localBusinessLd,
   organizationId,
   organizationLd,
@@ -130,6 +131,32 @@ describe('breadcrumbLd', () => {
     ]) as { itemListElement: { position: number; item: string }[] }
     expect(ld.itemListElement.map((item) => item.position)).toEqual([1, 2])
     expect(ld.itemListElement.map((item) => item.item)).toEqual([`${SITE}/`, `${SITE}/catalog`])
+  })
+})
+
+describe('faqLd', () => {
+  it('превращает вопросы и ответы в FAQPage', () => {
+    expect(
+      faqLd([
+        { question: 'Можно ли в землю?', answer: 'Только в трубе.' },
+        { question: 'Какой цвет?', answer: 'Чёрный.' },
+      ]),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Можно ли в землю?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Только в трубе.' },
+        },
+        {
+          '@type': 'Question',
+          name: 'Какой цвет?',
+          acceptedAnswer: { '@type': 'Answer', text: 'Чёрный.' },
+        },
+      ],
+    })
   })
 })
 
