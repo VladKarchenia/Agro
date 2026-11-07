@@ -7,6 +7,8 @@
     >
       Перейти к содержимому
     </a>
+    <!-- Сразу после ссылки пропуска: клавиатура доходит до баннера первой, а не после всего подвала -->
+    <CookieBanner />
     <AppTopBar />
     <AppHeader />
     <main id="main" tabindex="-1" class="flex-1 scroll-mt-20 outline-none">

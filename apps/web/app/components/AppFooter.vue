@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { reopen } = useCookieConsent()
+</script>
+
 <template>
   <footer class="bg-dark-deep py-8 text-sm text-on-dark-muted">
     <div class="mx-auto flex max-w-6xl flex-col gap-3 px-5 sm:flex-row sm:justify-between">
@@ -9,6 +13,14 @@
         <NuxtLink to="/consent" class="underline hover:text-on-dark">
           Согласие на обработку персональных данных
         </NuxtLink>
+        <button
+          :id="COOKIE_SETTINGS_ID"
+          type="button"
+          class="w-fit text-left underline hover:text-on-dark"
+          @click="reopen"
+        >
+          Настройки cookie
+        </button>
       </div>
       <span>Сайт в разработке. Демо-версия: цвета, знак и шрифты временные.</span>
     </div>

@@ -105,6 +105,24 @@ test.describe('Доступность: автоматический анализ
     expect(await scan(page)).toEqual([])
   })
 
+  test.describe('баннер cookie', () => {
+    test.use({ cookieChoice: 'none' })
+
+    test('первый визит', async ({ page }) => {
+      await open(page, '/')
+      await expect(page.getByRole('region', { name: 'Файлы cookie' })).toBeVisible()
+      expect(await scan(page)).toEqual([])
+    })
+
+    test('баннер, открытый повторно из подвала', async ({ page }) => {
+      await open(page, '/')
+      await page.getByRole('button', { name: 'Отклонить' }).click()
+      await page.getByRole('button', { name: 'Настройки cookie' }).click()
+      await expect(page.getByText('Сейчас аналитика отключена.')).toBeVisible()
+      expect(await scan(page)).toEqual([])
+    })
+  })
+
   test('страница 404', async ({ page, allowedConsole }) => {
     allowedConsole.push(/404/, /NUXT_E1005/)
     await page.goto('/net-takoj-stranicy')

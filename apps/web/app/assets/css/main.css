@@ -73,6 +73,8 @@
     -webkit-text-size-adjust: 100%;
     /* Цвет шапки и подвала. Виден за краями страницы при «резиночной» прокрутке и в запасной полосе ниже */
     background-color: var(--color-dark);
+    /* Высоту закреплённого баннера cookie задаёт CookieBanner: элемент в фокусе не прячется под ним */
+    scroll-padding-bottom: var(--cookie-banner-height, 0px);
   }
 
   /*
