@@ -2,7 +2,7 @@
 // Приводит фото товаров к единому виду и обновляет список файлов для сайта.
 // Использование: положите исходники в apps/web/public/images/products/<подкатегория>/<slug-товара>.<ext>
 // и запустите `pnpm photos`. Скрипт:
-//   1. переводит каждое новое фото в WebP 4:3 на белом фоне, не больше 1200×900 и без растяжения мелких;
+//   1. переводит каждое новое фото в WebP 4:3 на белом фоне (чёрный фон заменяет белым, см. whiten-background.mjs), не больше 1200×900 и без растяжения мелких;
 //   2. исходник переносит в photos-originals/ (в git не попадает, хранится у вас);
 //   3. пересобирает apps/web/app/data/photo-files.ts: список фото, которые знает сайт.
 // Уже обработанные файлы (ровно 4:3, не шире 1200) пропускаются, поэтому запуск безопасно повторять.
@@ -19,6 +19,7 @@ import {
 import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
+import whitenDarkBackground from './whiten-background.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const PHOTOS = join(ROOT, 'apps/web/public/images/products')
@@ -106,8 +107,10 @@ function touching(startCount, endCount) {
   return start ? 'start' : end ? 'end' : 'none'
 }
 
-async function convert(source) {
-  const meta = await sharp(source).metadata()
+async function convert(original) {
+  const meta = await sharp(original).metadata()
+  // Фото на тёмном фоне сначала переводим на белый, иначе тёмный фон принимается за предмет и обрезается
+  const source = (await whitenDarkBackground(original)) ?? original
   const flat = () => sharp(source).rotate().flatten({ background: '#ffffff' })
   const look = async (image) => {
     const { data, info } = await image.removeAlpha().raw().toBuffer({ resolveWithObject: true })

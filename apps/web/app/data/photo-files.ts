@@ -35,6 +35,32 @@ export const PHOTO_FILES: Record<string, [number, number]> = {
   'kabel-vvgng-ls/kabel-vvg-png-a-ls-3x2-5.webp': [1032, 774],
   'kabel-vvgng-ls/kabel-vvg-png-a-ls-3x4.webp': [1200, 900],
   'kabel-vvgng-ls/kabel-vvg-png-a-ls-3x6.webp': [1200, 900],
+  'lampy-kompaktnye-lyuminescentnye-kl-11-g23/lampa-kompaktnaya-lyuminescentnaya-pl-11vt-g23.webp':
+    [1200, 900],
+  'lampy-lyuminescentnye-t8-g13/lampa-lyuminescentnaya-t8-18vt-g13-600mm.webp': [1200, 900],
+  'lampy-lyuminescentnye-t8-g13/lampa-lyuminescentnaya-t8-36vt-g13-1200mm.webp': [1200, 900],
+  'lampy-svetodiodnye-led-power-e27-e40/lampa-svetodiodnaya-led-power-50vt-e27-e40.webp': [
+    1200, 900,
+  ],
+  'lampy-svetodiodnye-led-power-e27-e40/lampa-svetodiodnaya-led-power-60vt-e27-e40.webp': [
+    1200, 900,
+  ],
+  'lampy-svetodiodnye-led-power-e27-e40/lampa-svetodiodnaya-led-power-a80-30vt-e27.webp': [
+    1200, 900,
+  ],
+  'lampy-svetodiodnye-led-power-e27-e40/lampa-svetodiodnaya-led-power-a90-40vt-e27.webp': [
+    1200, 900,
+  ],
+  'lampy-svetodiodnye-std-a60-e27/lampa-svetodiodnaya-std-a60-10vt-e27.webp': [1200, 900],
+  'lampy-svetodiodnye-std-a60-e27/lampa-svetodiodnaya-std-a60-12vt-e27.webp': [1200, 900],
+  'lampy-svetodiodnye-std-a60-e27/lampa-svetodiodnaya-std-a60-15vt-e27.webp': [1200, 900],
+  'lampy-svetodiodnye-std-a60-e27/lampa-svetodiodnaya-std-a60-20vt-e27.webp': [1200, 900],
+  'lampy-svetodiodnye-t8-g13/lampa-svetodiodnaya-t8-10vt-g13-600mm.webp': [1200, 900],
+  'lampy-svetodiodnye-t8-g13/lampa-svetodiodnaya-t8-18vt-g13-1200mm.webp': [1200, 900],
+  'lampy-svetodiodnye-t8-g13/lampa-svetodiodnaya-t8-24vt-g13-1200mm-pro.webp': [1200, 900],
+  'lampy-svetodiodnye-t8-g13/lampa-svetodiodnaya-t8-24vt-g13-1500mm.webp': [1200, 900],
+  'lampy-svetodiodnye-t8-g13/lampa-svetodiodnaya-t8-36vt-g13-1200mm-pro.webp': [1200, 900],
+  'lampy-svetodiodnye-t8-g13/lampa-svetodiodnaya-t8-45vt-g13-1200mm-pro.webp': [1200, 900],
   'provod-pv-1-puv/provod-puv-1x10-belyi.webp': [484, 363],
   'provod-pv-1-puv/provod-puv-1x10-chernyi.webp': [492, 369],
   'provod-pv-1-puv/provod-puv-1x10-krasnyi.webp': [580, 435],
