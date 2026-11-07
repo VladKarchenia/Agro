@@ -30,13 +30,7 @@ usePageSeo({
     <h1 class="text-3xl font-extrabold md:text-5xl">Каталог</h1>
     <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="category in categories" :key="category.slug">
-        <NuxtLink
-          :to="categoryPath(category)"
-          class="block h-full rounded-card border border-line bg-surface p-5 transition-colors hover:border-brand"
-        >
-          <h2 class="text-lg font-bold">{{ category.title }}</h2>
-          <p class="mt-1 text-ink-muted">{{ category.description }}</p>
-        </NuxtLink>
+        <CategoryCard :category="category" />
       </li>
     </ul>
   </div>

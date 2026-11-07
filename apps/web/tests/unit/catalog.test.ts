@@ -1,4 +1,4 @@
-import { readdirSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
@@ -440,5 +440,30 @@ describe('лампы: выбор цветовой температуры', () =>
         '4000 К и 6500 К (на выбор)',
       )
     }
+  })
+})
+
+describe('обложки категорий', () => {
+  const publicDir = join(__dirname, '..', '..', 'public')
+
+  it('у каждой категории есть обложка, и её файл лежит в public/images/categories', () => {
+    for (const category of getCategories()) {
+      expect(category.cover, category.slug).toBeDefined()
+      const src = category.cover?.src ?? ''
+      expect(src, category.slug).toBe(`/images/categories/${category.slug}.webp`)
+      expect(() => readFileSync(join(publicDir, src)), category.slug).not.toThrow()
+      expect(
+        Math.abs((category.cover?.width ?? 0) / (category.cover?.height ?? 1) - 4 / 3),
+      ).toBeLessThan(0.01)
+    }
+  })
+
+  it('в папке обложек нет файлов без категории', () => {
+    const files = readdirSync(join(publicDir, 'images', 'categories')).sort()
+    expect(files).toEqual(
+      getCategories()
+        .map((category) => `${category.slug}.webp`)
+        .sort(),
+    )
   })
 })

@@ -291,3 +291,37 @@ test.describe('Каталог: лампы промышленные', () => {
     await expect(page.getByRole('main').getByText(`${T8_PRODUCT} 6500 К`).first()).toBeVisible()
   })
 })
+
+test.describe('Каталог: обложки категорий', () => {
+  test('на странице каталога у каждой категории загружена обложка 4:3', async ({ page }) => {
+    await open(page, '/catalog')
+    const covers = page.getByRole('main').locator('a[href^="/catalog/"] img')
+    await expect(covers).toHaveCount(2)
+    for (const cover of await covers.all()) {
+      await expect(cover).toHaveAttribute('alt', '')
+      await expect
+        .poll(() => cover.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth))
+        .toBeGreaterThan(0)
+    }
+  })
+
+  test('карточка категории остаётся одной ссылкой с названием и описанием', async ({ page }) => {
+    await open(page, '/catalog')
+    const link = page.getByRole('link', { name: /Лампы промышленные/ })
+    await expect(link).toHaveCount(1)
+    await expect(link.getByRole('heading', { level: 2, name: 'Лампы промышленные' })).toBeVisible()
+  })
+
+  test('превью ссылки категории использует её обложку', async ({ page }) => {
+    await open(page, '/catalog/lampy-promyshlennye')
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      'content',
+      /\/images\/categories\/lampy-promyshlennye\.webp$/,
+    )
+  })
+
+  test('на главной у категорий тоже есть обложки', async ({ page }) => {
+    await open(page, '/')
+    await expect(page.getByRole('main').locator('a[href^="/catalog/"] img')).toHaveCount(2)
+  })
+})

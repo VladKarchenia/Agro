@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { categoryPath, getCategories } from '~/data/catalog'
+import { getCategories } from '~/data/catalog'
 import { company } from '~/data/company'
 import { organizationLd, websiteLd } from '~/utils/structured-data'
 
@@ -35,13 +35,7 @@ usePageSeo({
       <h2 class="text-2xl font-extrabold md:text-3xl">Категории</h2>
       <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <li v-for="category in categories" :key="category.slug">
-          <NuxtLink
-            :to="categoryPath(category)"
-            class="block h-full rounded-card border border-line bg-surface p-5 transition-colors hover:border-brand"
-          >
-            <h3 class="text-lg font-bold">{{ category.title }}</h3>
-            <p class="mt-1 text-ink-muted">{{ category.description }}</p>
-          </NuxtLink>
+          <CategoryCard :category="category" :level="3" />
         </li>
       </ul>
     </section>

@@ -5,6 +5,8 @@ export interface Category {
   description: string
   /** Как называем позиции раздела в заголовках: у кабеля «типоразмеры» (по умолчанию), у ламп «модели» */
   itemsNoun?: 'типоразмеры' | 'модели'
+  /** Обложка категории: собирается `pnpm covers` из фото товаров, лежит в public/images/categories/ */
+  cover?: { src: string; width: number; height: number }
 }
 
 export interface ContentSection {

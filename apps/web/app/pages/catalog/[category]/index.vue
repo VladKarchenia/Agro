@@ -22,6 +22,9 @@ usePageSeo({
     { name: 'Каталог', path: '/catalog' },
     { name: category.title, path },
   ],
+  image: category.cover?.src,
+  imageSize: category.cover && { width: category.cover.width, height: category.cover.height },
+  imageAlt: category.cover && `${category.title}: фото товаров категории`,
   jsonLd: [
     collectionLd(siteUrl, {
       name: category.title,

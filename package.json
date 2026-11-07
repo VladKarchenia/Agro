@@ -16,6 +16,7 @@
     "test": "pnpm --filter @agroed/web test",
     "seo:audit": "node scripts/seo-audit.mjs",
     "photos": "node scripts/photos.mjs",
+    "covers": "node scripts/covers.mjs",
     "test:e2e": "pnpm --filter @agroed/web test:e2e",
     "env:init": "node scripts/env-init.mjs",
     "db:up": "docker compose up -d db --wait",
