@@ -3,6 +3,8 @@ export interface Category {
   title: string
   /** Короткое описание для карточек и мета-тегов */
   description: string
+  /** Как называем позиции раздела в заголовках: у кабеля «типоразмеры» (по умолчанию), у ламп «модели» */
+  itemsNoun?: 'типоразмеры' | 'модели'
 }
 
 export interface ContentSection {
@@ -53,7 +55,14 @@ export interface Product {
   /** Цена в BYN. Пока не заполняется: на сайте везде «Цена по запросу» */
   price: number | null
   /** Исполнения одного товара (например, цвета): на странице выбирается одно, в корзину идёт его slug */
-  variants?: { title: string; options: ProductVariant[] }
+  variants?: {
+    title: string
+    options: ProductVariant[]
+    /** Текст кнопки в списке товаров. По умолчанию «Выбрать <название в нижнем регистре>» */
+    chooseLabel?: string
+    /** Фото одно на все исполнения (цветовая температура лампы): лежит под slug товара, а не исполнения */
+    sharedPhotos?: boolean
+  }
   /** Страница, по которой проверены факты о товаре */
   sourceUrl: string
 }

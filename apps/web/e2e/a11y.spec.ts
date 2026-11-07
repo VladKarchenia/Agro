@@ -38,6 +38,12 @@ const PAGES: [string, string][] = [
   ['подкатегория', SUBCATEGORY_PATH],
   ['товар', FIRST_PRODUCT.path],
   ['товар с выбором цвета', COLOR_PRODUCT.path],
+  ['категория ламп', '/catalog/lampy-promyshlennye'],
+  ['подкатегория ламп', '/catalog/lampy-promyshlennye/lampy-svetodiodnye-t8-g13'],
+  [
+    'товар лампа',
+    '/catalog/lampy-promyshlennye/lampy-svetodiodnye-t8-g13/lampa-svetodiodnaya-t8-18vt-g13-1200mm',
+  ],
   ['политика', '/privacy'],
   ['согласие', '/consent'],
   ['контакты', '/contacts'],

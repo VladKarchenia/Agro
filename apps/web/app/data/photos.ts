@@ -38,7 +38,9 @@ function imagesFor(subcategorySlug: string, key: string, alt: string): ProductIm
  */
 export function getProductImages(product: Product, variantSlug?: string): ProductImage[] {
   const options = product.variants?.options
-  if (!options) return imagesFor(product.subcategorySlug, product.slug, product.name)
+  if (!options || product.variants?.sharedPhotos) {
+    return imagesFor(product.subcategorySlug, product.slug, product.name)
+  }
 
   const chosen = variantSlug
     ? options.filter((option) => option.slug === variantSlug)

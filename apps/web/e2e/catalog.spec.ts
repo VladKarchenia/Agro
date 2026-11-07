@@ -221,3 +221,73 @@ test.describe('Каталог: фото товаров', () => {
     )
   })
 })
+
+test.describe('Каталог: лампы промышленные', () => {
+  const LAMPS_PATH = '/catalog/lampy-promyshlennye'
+  const T8_PATH = `${LAMPS_PATH}/lampy-svetodiodnye-t8-g13`
+  const T8_PRODUCT = 'Лампа светодиодная T8 18 Вт G13 1200 мм'
+
+  test('каталог → категория ламп → подкатегория → товар по ссылкам', async ({ page }) => {
+    await open(page, '/catalog')
+    await page.getByRole('link', { name: /Лампы промышленные/ }).click()
+    await expect(page).toHaveURL(new RegExp(`${LAMPS_PATH}$`))
+    await expect(page.getByRole('heading', { level: 1, name: 'Лампы промышленные' })).toBeVisible()
+    await expect(page.getByRole('main').getByRole('heading', { level: 2 })).toHaveCount(5)
+
+    await page.getByRole('link', { name: /Лампы светодиодные T8 G13/ }).click()
+    await expect(page).toHaveURL(new RegExp(`${T8_PATH}$`))
+    await expect(page.getByRole('heading', { level: 2, name: 'Модели' })).toBeVisible()
+    await expect(page.getByRole('article')).toHaveCount(6)
+
+    await productCard(page, T8_PRODUCT).getByRole('link').first().click()
+    await expect(page.getByRole('heading', { level: 1, name: T8_PRODUCT })).toBeVisible()
+    await expect(page.getByText('Цоколь', { exact: true })).toBeVisible()
+    await expect(page.getByText('Цена по запросу').first()).toBeVisible()
+  })
+
+  test('страница лампы: другие модели, остальные разделы категории, лампа кладётся в корзину', async ({
+    page,
+  }) => {
+    await open(page, `${T8_PATH}/lampa-svetodiodnaya-t8-18vt-g13-1200mm`)
+    const models = page.getByRole('region', { name: 'Другие модели' })
+    await expect(models.getByRole('link')).toHaveCount(6)
+    const others = page.getByRole('region', { name: 'Ещё в категории «Лампы промышленные»' })
+    await expect(others.getByRole('heading', { level: 3 })).toHaveCount(4)
+
+    await page.getByRole('button', { name: /^В корзину/ }).click()
+    await expect
+      .poll(() => readCart(page))
+      .toEqual([{ slug: 'lampa-svetodiodnaya-t8-18vt-g13-1200mm-4000k', quantity: 1 }])
+  })
+
+  test('цветовая температура выбирается на странице лампы и попадает в корзину', async ({
+    page,
+  }) => {
+    await open(page, T8_PATH)
+    const card = productCard(page, T8_PRODUCT).first()
+    await expect(card.getByRole('link', { name: 'Выбрать оттенок' })).toBeVisible()
+    await expect(card.getByRole('button', { name: /^В корзину/ })).toHaveCount(0)
+
+    await card.getByRole('link', { name: 'Выбрать оттенок' }).click()
+    const temperature = page.getByRole('group', { name: 'Цветовая температура' })
+    await expect(temperature.getByRole('radio')).toHaveCount(2)
+    await expect(temperature.getByRole('radio', { name: '4000 К' })).toBeChecked()
+
+    await temperature.getByText('6500 К', { exact: true }).click()
+    await page.getByRole('button', { name: /^В корзину/ }).click()
+    await expect
+      .poll(() => readCart(page))
+      .toEqual([{ slug: 'lampa-svetodiodnaya-t8-18vt-g13-1200mm-6500k', quantity: 1 }])
+
+    // у ламп только с одним оттенком выбора нет, лампа кладётся в корзину сразу
+    await open(page, `${T8_PATH}/lampa-svetodiodnaya-t8-45vt-g13-1200mm-pro`)
+    await expect(page.getByRole('group', { name: 'Цветовая температура' })).toHaveCount(0)
+  })
+
+  test('в корзине название лампы с выбранным оттенком', async ({ page }) => {
+    await openWithCart(page, [
+      { slug: 'lampa-svetodiodnaya-t8-18vt-g13-1200mm-6500k', quantity: 2 },
+    ])
+    await expect(page.getByRole('main').getByText(`${T8_PRODUCT} 6500 К`).first()).toBeVisible()
+  })
+})

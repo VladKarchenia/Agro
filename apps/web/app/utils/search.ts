@@ -133,6 +133,25 @@ const ENDINGS = [
 const SIZE_TOKEN = /^\d+(?:\.\d+)?(?:х\d+(?:\.\d+)?)+$/
 const PLAIN_NUMBER = /^\d+(?:\.\d+)?$/
 
+/** Число с единицей, слитые в одно слово: «10вт», «6500к». Число отдельно тоже ищется */
+const UNIT_NUMBER = /^(\d+(?:\.\d+)?)(?:вт|к)$/
+
+/** Латинские буквы, похожие на русские: в обозначениях вроде «E27» и «Е27» они неразличимы на глаз */
+const CODE_LOOKALIKES: Record<string, string> = {
+  a: 'а',
+  b: 'в',
+  c: 'с',
+  e: 'е',
+  h: 'н',
+  k: 'к',
+  m: 'м',
+  o: 'о',
+  p: 'р',
+  t: 'т',
+  x: 'х',
+  y: 'у',
+}
+
 /** Приводит текст к виду, в котором слова сравниваются: нижний регистр, ё, единый вид типоразмеров */
 export function normalizeText(text: string): string {
   return (
@@ -147,6 +166,13 @@ export function normalizeText(text: string): string {
       )
       // «4x», пока человек ещё не дописал вторую цифру
       .replace(/(\d)\s*[xх×*](?=\s|$)/g, '$1х')
+      // «10 Вт», «10W», «10вт» → «10вт»; «6500 К», «6500K» → «6500к» (после числа и не перед буквой)
+      .replace(/(\d)\s*(?:w|вт)(?![a-zа-я0-9])/g, '$1вт')
+      .replace(/(\d)\s*[kк](?![a-zа-я0-9])/g, '$1к')
+      // «E27» и «Е27», «T8» и «Т8», «A60» и «А60» с латинской и русской буквой → одно слово
+      .replace(/[a-zа-я0-9]*\d[a-zа-я0-9]*/g, (code) =>
+        code.replace(/[a-z]/g, (char) => CODE_LOOKALIKES[char] ?? char),
+      )
   )
 }
 
@@ -164,12 +190,17 @@ const canonical = (word: string) => CANONICAL[word] ?? word
 /** Слова нормализованного текста: составные («пв-1», «жёлто-зелёный») идут целиком и по частям */
 function wordsOf(normalized: string): string[] {
   const words = new Set<string>()
+  const add = (word: string) => {
+    words.add(word)
+    const unitNumber = UNIT_NUMBER.exec(word)?.[1]
+    if (unitNumber) words.add(unitNumber)
+  }
   for (const match of normalized.matchAll(/[a-zа-я0-9]+(?:[.-][a-zа-я0-9]+)*/g)) {
     const word = canonical(match[0])
-    words.add(word)
+    add(word)
     if (word.includes('-')) {
       words.add(word.replaceAll('-', ''))
-      for (const part of word.split('-')) words.add(canonical(part))
+      for (const part of word.split('-')) add(canonical(part))
     }
     if (SIZE_TOKEN.test(word)) {
       for (const part of word.split('х')) words.add(part)
@@ -479,14 +510,19 @@ interface Span {
 export function highlight(text: string, tokens: string[]): Segment[] {
   if (tokens.length === 0) return [{ text, hit: false }]
   const spans: Span[] = []
+  // Третья ветка: число с единицей через пробел («10 Вт», «6500 К»), как одно слово
   const wordPattern =
-    /\d+(?:[.,]\d+)?(?:\s?[xх×*]\s?\d+(?:[.,]\d+)?)+|[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*(?:[.,]\d+)?/gu
+    /\d+(?:[.,]\d+)?(?:\s?[xх×*]\s?\d+(?:[.,]\d+)?)+|\d+(?:[.,]\d+)?\s(?:вт|w|к|k)(?![\p{L}\p{N}])|[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*(?:[.,]\d+)?/giu
 
   for (const match of text.matchAll(wordPattern)) {
     const original = match[0]
     const start = match.index
     const word = canonical(normalizeText(original))
-    const parts: { word: string; start: number }[] = [{ word, start: 0 }]
+    const parts: { word: string; start: number; whole?: boolean }[] = [
+      { word, start: 0, whole: true },
+    ]
+    const unitNumber = UNIT_NUMBER.exec(word)?.[1]
+    if (unitNumber) parts.push({ word: unitNumber, start: 0 })
     if (word.includes('-')) {
       let offset = 0
       for (const part of word.split('-')) {
@@ -502,7 +538,8 @@ export function highlight(text: string, tokens: string[]): Segment[] {
         const quality = matchQuality(token, part.word)
         if (quality === 0) continue
         const prefixOnly = part.word !== token && part.word.startsWith(token) && !wholeWordOnly
-        const length = prefixOnly ? token.length : part.word.length
+        // Слово целиком подсвечиваем по длине написанного в тексте: «10W» и «10 Вт» нормализуются иначе
+        const length = prefixOnly ? token.length : part.whole ? original.length : part.word.length
         const from = start + (wholeWordOnly ? 0 : part.start)
         spans.push({ start: from, end: wholeWordOnly ? start + original.length : from + length })
         break

@@ -24,6 +24,49 @@ describe('нормализация', () => {
   })
 })
 
+describe('лампы: мощность, цоколь, температура', () => {
+  it('«10 Вт», «10W», «10вт» это одно и то же, число отдельно тоже находит', () => {
+    for (const written of ['10 Вт', '10W', '10w', '10вт', '10 W']) {
+      expect(normalizeText(written), written).toBe('10вт')
+    }
+    for (const written of ['6500 К', '6500K', '6500k', '6500к']) {
+      expect(normalizeText(written), written).toBe('6500к')
+    }
+    // кВ и кг не принимаем за кельвины
+    expect(normalizeText('0,66 кВ')).toBe('0.66 кв')
+  })
+
+  it('латинская и русская буква в обозначении цоколя не различаются', () => {
+    expect(normalizeText('E27')).toBe(normalizeText('Е27'))
+    expect(normalizeText('T8')).toBe(normalizeText('Т8'))
+    expect(normalizeText('A60')).toBe(normalizeText('А60'))
+  })
+
+  it('находит лампу по цоколю, мощности и температуре в любом написании', () => {
+    const e27 = names('лампа E27')
+    expect(e27.length).toBeGreaterThan(0)
+    expect(names('лампа Е27')).toEqual(e27)
+    expect(names('e27 20вт')).toEqual(['Лампа светодиодная STD-A60 20 Вт E27'])
+    expect(names('e27 20 w')).toEqual(names('e27 20вт'))
+    expect(names('e27 20')).toContain('Лампа светодиодная STD-A60 20 Вт E27')
+    expect(names('т8 g13 36 вт')).toEqual(
+      expect.arrayContaining([
+        'Лампа люминесцентная T8 36 Вт G13 1200 мм',
+        'Лампа светодиодная T8 36 Вт G13 1200 мм PRO',
+      ]),
+    )
+    expect(names('6400K')).toEqual(['Лампа компактная люминесцентная PL 11 Вт G23'])
+    expect(names('g23')).toEqual(['Лампа компактная люминесцентная PL 11 Вт G23'])
+  })
+
+  it('число с единицей подсвечивается целиком, в том числе через пробел', () => {
+    expect(marked('Лампа 20 Вт E27', ['20вт'])).toEqual(['20 Вт'])
+    expect(marked('Лампа 20W E27', ['20вт'])).toEqual(['20W'])
+    expect(marked('Лампа 20 Вт E27', [normalizeText('e27')])).toEqual(['E27'])
+    expect(marked('Лампа 20W', ['20'])).toEqual(['20'])
+  })
+})
+
 describe('сопоставление слов', () => {
   it('точное, по началу, по окончанию, с опечаткой', () => {
     expect(matchQuality('кабель', 'кабель')).toBe(1)
@@ -134,7 +177,7 @@ describe('поиск по каталогу', () => {
   })
 
   it('примеры подсказок в интерфейсе находят товары', () => {
-    for (const query of ['АВБбШв 4х16', 'провод синий', 'медный 6']) {
+    for (const query of ['АВБбШв 4х16', 'провод синий', 'медный 6', 'лампа E27 20 Вт']) {
       expect(search(index, query).totalProducts, query).toBeGreaterThan(0)
     }
   })

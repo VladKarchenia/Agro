@@ -1,0 +1,132 @@
+import type { Product, ProductSpec, SubcategoryData } from './types'
+
+// Общие помощники для ламп: характеристики в едином порядке, сборка товара, повторяющиеся тексты.
+// Страна происхождения — Китай (со слов заказчика). Производитель и бренд умышленно не указываем.
+
+export const LAMP_CATEGORY = 'lampy-promyshlennye'
+export const LAMP_COUNTRY = 'Китай'
+
+export type LampKind = 'Светодиодная' | 'Люминесцентная' | 'Компактная люминесцентная'
+
+export interface LampSpecInput {
+  kind: LampKind
+  socket: string
+  /** Потребляемая мощность, Вт */
+  power: number
+  /** Световой поток, лм */
+  luminousFlux: number
+  /** Уже отформатировано: «6500 К». Для моделей на выбор — SELECTABLE_TEMPERATURE */
+  colorTemperature: string
+  /** «230 В»: только если источник называет напряжение */
+  voltage?: string
+  /** Частота сети, Гц */
+  frequency: number
+  /** «30 000 часов» */
+  lifetime?: string
+  /** Степень защиты, число после IP */
+  ip?: number
+  /** «от −25 до +50 °С» */
+  operatingTemperature?: string
+  /** Угол свечения, градусы */
+  beamAngle?: number
+  /** «590×26 мм» */
+  size: string
+}
+
+/** Характеристики лампы в едином порядке. Незаданные значения в список не попадают */
+export function lampSpecs(input: LampSpecInput): ProductSpec[] {
+  const specs: (ProductSpec | undefined)[] = [
+    { name: 'Тип лампы', value: input.kind },
+    { name: 'Страна происхождения', value: LAMP_COUNTRY },
+    { name: 'Цоколь', value: input.socket },
+    { name: 'Потребляемая мощность', value: `${input.power} Вт` },
+    { name: 'Световой поток', value: `${input.luminousFlux} лм` },
+    { name: 'Цветовая температура', value: input.colorTemperature },
+    input.voltage ? { name: 'Номинальное напряжение', value: input.voltage } : undefined,
+    { name: 'Частота сети', value: `${input.frequency} Гц` },
+    input.lifetime ? { name: 'Срок службы', value: input.lifetime } : undefined,
+    input.ip === undefined ? undefined : { name: 'Степень защиты', value: `IP${input.ip}` },
+    input.operatingTemperature
+      ? { name: 'Температура эксплуатации', value: input.operatingTemperature }
+      : undefined,
+    input.beamAngle === undefined
+      ? undefined
+      : { name: 'Угол свечения', value: `${input.beamAngle}°` },
+    { name: 'Габаритные размеры', value: input.size },
+  ]
+  return specs.filter((spec): spec is ProductSpec => Boolean(spec))
+}
+
+/** «108×60 мм» */
+export const lampSize = (length: number, diameter: number) => `${length}×${diameter} мм`
+
+export interface LampInput {
+  subcategory: SubcategoryData['subcategory']
+  slug: string
+  name: string
+  /** До ~75 знаков: название, описание и фраза про цену должны уложиться в мета-описание */
+  summary: string
+  description: string[]
+  specs: LampSpecInput
+  /** Страница, по которой проверены факты */
+  sourceUrl: string
+}
+
+export function lampProduct(input: LampInput): Product {
+  // Модель, которая есть с двумя оттенками: оттенок выбирается на странице и уходит в корзину
+  const selectable = input.specs.colorTemperature === SELECTABLE_TEMPERATURE
+  return {
+    slug: input.slug,
+    categorySlug: input.subcategory.categorySlug,
+    subcategorySlug: input.subcategory.slug,
+    name: input.name,
+    summary: input.summary,
+    description: input.description.map((paragraph, index) =>
+      index === 0 ? `${paragraph} Страна происхождения — ${LAMP_COUNTRY}.` : paragraph,
+    ),
+    specs: lampSpecs(
+      selectable ? { ...input.specs, colorTemperature: '4000 К и 6500 К (на выбор)' } : input.specs,
+    ),
+    price: null,
+    variants: selectable ? temperatureVariants(input.slug) : undefined,
+    sourceUrl: input.sourceUrl,
+  }
+}
+
+export const PRICE_FAQ = {
+  question: 'Почему на сайте нет цены?',
+  answer:
+    'Цены на сайте не публикуются, у каждого товара указано «Цена по запросу». Добавьте нужные позиции в корзину и отправьте заявку, менеджер свяжется с вами.',
+}
+
+/** По данным каталога источника: промышленные лампы не для дома */
+export const NOT_FOR_HOME =
+  'По данным каталога, лампы этой группы предназначены для промышленного освещения и не предназначены для использования в быту.'
+
+/** Что означает IP20: полезно там, где в каталоге названы открытые площадки */
+export const IP20_NOTE =
+  'Степень защиты IP20 означает защиту от попадания твёрдых предметов крупнее 12,5 мм, но не от воды и влаги. Если лампу нужно установить на открытой площадке или в сыром помещении, её ставят в закрытый влагозащищённый светильник.'
+
+/** Значение цветовой температуры для моделей, которые есть в двух оттенках */
+export const SELECTABLE_TEMPERATURE = '4000 К или 6500 К'
+
+/** Выбор оттенка на странице товара: у каждого оттенка свой slug (в корзину идёт он), фото общее */
+function temperatureVariants(slug: string) {
+  return {
+    title: 'Цветовая температура',
+    chooseLabel: 'Выбрать оттенок',
+    sharedPhotos: true,
+    options: [
+      { slug: `${slug}-4000k`, label: '4000 К' },
+      { slug: `${slug}-6500k`, label: '6500 К' },
+    ],
+  }
+}
+
+/** Для моделей с выбором оттенка: пояснение на странице товара и в вопросах */
+export const CHOICE_NOTE =
+  'Цветовая температура выбирается на этой странице: 4000 К — нейтральный белый свет, 6500 К — холодный белый.'
+
+/** Подсказка про оттенки для разделов «Как выбрать» */
+export const COLOR_TEMPERATURE_HINT =
+  'Цветовая температура. Около 4000 К свет нейтрально-белый, около 6500 К холодный, ближе к дневному. Оттенок подбирают по назначению помещения и по уже установленным лампам, чтобы свет в помещении не отличался.'

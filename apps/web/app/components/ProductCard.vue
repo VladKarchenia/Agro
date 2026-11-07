@@ -27,7 +27,7 @@ const quantity = ref(1)
       <p class="text-ink-muted">Цена по запросу</p>
       <div v-if="product.variants" class="mt-auto pt-2">
         <AppButton :to="productPath(product)" variant="ghost" class="w-full">
-          Выбрать {{ product.variants.title.toLowerCase() }}
+          {{ product.variants.chooseLabel ?? `Выбрать ${product.variants.title.toLowerCase()}` }}
         </AppButton>
       </div>
       <div v-else class="mt-auto flex items-start gap-3 pt-2">

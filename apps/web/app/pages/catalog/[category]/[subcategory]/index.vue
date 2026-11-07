@@ -18,6 +18,9 @@ if (!category || !subcategory) {
 }
 
 const products = getProducts(category.slug, subcategory.slug)
+// У кабеля позиции называем типоразмерами, у ламп моделями
+const itemsNoun = category.itemsNoun ?? 'типоразмеры'
+const itemsHeading = itemsNoun.charAt(0).toUpperCase() + itemsNoun.slice(1)
 
 const { siteUrl } = useRuntimeConfig().public
 const path = subcategoryPath(subcategory)
@@ -57,7 +60,7 @@ usePageSeo({
     </div>
 
     <section aria-labelledby="products-title" class="mt-10">
-      <h2 id="products-title" class="text-2xl font-bold">Типоразмеры</h2>
+      <h2 id="products-title" class="text-2xl font-bold">{{ itemsHeading }}</h2>
       <ul class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <li v-for="product in products" :key="product.slug">
           <ProductCard :product="product" :level="3" />

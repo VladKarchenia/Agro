@@ -1,6 +1,11 @@
 import { categories } from './categories'
 import { avbbshvData } from './subcategories/avbbshv'
 import { avvgData } from './subcategories/avvg'
+import { lampsCompactKlData } from './subcategories/lamps-compact-kl'
+import { lampsFluorescentT8Data } from './subcategories/lamps-fluorescent-t8'
+import { lampsLedPowerData } from './subcategories/lamps-led-power'
+import { lampsLedT8Data } from './subcategories/lamps-led-t8'
+import { lampsStdA60Data } from './subcategories/lamps-std-a60'
 import { pv1Data } from './subcategories/pv-1-puv'
 import { pv3Data } from './subcategories/pv-3-pugv'
 import { pvsData } from './subcategories/pvs'
@@ -29,6 +34,11 @@ const data: SubcategoryData[] = [
   pv3Data,
   pvsData,
   sipData,
+  lampsStdA60Data,
+  lampsLedPowerData,
+  lampsLedT8Data,
+  lampsFluorescentT8Data,
+  lampsCompactKlData,
 ]
 const subcategories: Subcategory[] = data.map((item) => item.subcategory)
 const products: Product[] = data.flatMap((item) => item.products)

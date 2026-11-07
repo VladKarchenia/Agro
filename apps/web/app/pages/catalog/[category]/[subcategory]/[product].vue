@@ -34,6 +34,8 @@ const quantity = ref(1)
 // Перелинковка: соседние типоразмеры и остальные разделы категории
 const related = getRelatedProducts(product)
 const sizesTotal = getProducts(product.categorySlug, product.subcategorySlug).length
+// У кабеля позиции называем типоразмерами, у ламп моделями
+const itemsNoun = category.itemsNoun ?? 'типоразмеры'
 const otherSubcategories = getOtherSubcategories(subcategory)
 
 // У товара с исполнениями (цвет) в корзину уходит выбранное исполнение, а не сам товар
@@ -183,7 +185,7 @@ usePageSeo({
     </div>
 
     <section v-if="related.length > 0" class="mt-14" aria-labelledby="related-title">
-      <h2 id="related-title" class="text-2xl font-bold">Другие типоразмеры</h2>
+      <h2 id="related-title" class="text-2xl font-bold">Другие {{ itemsNoun }}</h2>
       <ul class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <li v-for="item in related" :key="item.slug">
           <NuxtLink
@@ -199,7 +201,7 @@ usePageSeo({
           :to="subcategoryPath(subcategory)"
           class="inline-flex min-h-11 items-center text-link underline"
         >
-          Все типоразмеры раздела «{{ subcategory.title }}» ({{ sizesTotal }})
+          Все {{ itemsNoun }} раздела «{{ subcategory.title }}» ({{ sizesTotal }})
         </NuxtLink>
       </p>
     </section>

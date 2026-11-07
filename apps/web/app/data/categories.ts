@@ -8,4 +8,10 @@ export const categories: Category[] = [
     title: 'Кабель и провод',
     description: 'Силовые кабели и провода для электроустановок',
   },
+  {
+    slug: 'lampy-promyshlennye',
+    title: 'Лампы промышленные',
+    description: 'Светодиодные, люминесцентные и компактные лампы для промышленного освещения',
+    itemsNoun: 'модели',
+  },
 ]

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import {
   categoryPath,
   getAllProducts,
+  getAllSubcategories,
   getCartEntry,
   getCategories,
   getCategory,
@@ -121,10 +122,11 @@ describe('перелинковка на карточке товара', () => {
 
 describe('позиции корзины и исполнения (цвета)', () => {
   const withColors = products.find((product) => product.variants)
+  const cables = products.filter((product) => product.categorySlug === 'kabel-provod')
 
   it('цвета на выбор: ПуВ пять, ПуГВ семь, ПВС два, у остальных товаров цветов нет', () => {
     const counts: Record<string, number> = {}
-    for (const product of products) {
+    for (const product of cables) {
       const count = product.variants?.options.length ?? 0
       counts[product.subcategorySlug] ??= count
       expect(count, product.slug).toBe(counts[product.subcategorySlug])
@@ -225,6 +227,23 @@ describe('наполнение товаров', () => {
     }
   })
 
+  it('в текстах подкатегорий нет невставленных подстановок вроде $colorList(...)', () => {
+    for (const subcategory of getAllSubcategories()) {
+      const text = [
+        subcategory.title,
+        subcategory.description,
+        ...subcategory.intro,
+        ...subcategory.sections.flatMap((section) => [
+          section.heading,
+          ...(section.paragraphs ?? []),
+          ...(section.items ?? []),
+        ]),
+        ...subcategory.faq.flatMap((item) => [item.question, item.answer]),
+      ].join(' ')
+      expect(text, subcategory.slug).not.toMatch(/\$\w+\(|\$\{|undefined|NaN/)
+    }
+  })
+
   it('у подкатегорий заполнены SEO-поля и размер title укладывается в норму', () => {
     const titles = new Set<string>()
     for (const category of getCategories()) {
@@ -298,7 +317,7 @@ describe('фото товаров', () => {
   })
 
   it('getProductImages: у товара с цветами фото берётся по выбранному цвету и не подменяется другим', () => {
-    const colored = products.filter((product) => product.variants)
+    const colored = products.filter((product) => product.variants && !product.variants.sharedPhotos)
     expect(colored.length).toBeGreaterThan(0)
     for (const product of colored) {
       for (const option of product.variants?.options ?? []) {
@@ -318,6 +337,108 @@ describe('фото товаров', () => {
       expect(getProductImages(product, `${product.slug}-chernyi`)).toEqual([])
       // но в списке (без выбранного цвета) показывается фото белого
       expect(getProductImages(product).length, product.slug).toBeGreaterThan(0)
+    }
+  })
+})
+
+describe('лампы промышленные', () => {
+  const lampCategory = 'lampy-promyshlennye'
+  const counts: Record<string, number> = {
+    'lampy-svetodiodnye-std-a60-e27': 4,
+    'lampy-svetodiodnye-led-power-e27-e40': 4,
+    'lampy-svetodiodnye-t8-g13': 6,
+    'lampy-lyuminescentnye-t8-g13': 2,
+    'lampy-kompaktnye-lyuminescentnye-kl-11-g23': 1,
+  }
+
+  it('в категории пять подкатегорий в заданном порядке и нужное число товаров в каждой', () => {
+    expect(getSubcategories(lampCategory).map((item) => item.slug)).toEqual(Object.keys(counts))
+    for (const [slug, count] of Object.entries(counts)) {
+      expect(getProducts(lampCategory, slug), slug).toHaveLength(count)
+    }
+  })
+
+  it('у ламп нет бренда и производителя (скрыты умышленно), страна — Китай', () => {
+    for (const subcategory of getSubcategories(lampCategory)) {
+      for (const product of getProducts(lampCategory, subcategory.slug)) {
+        expect(product.brand, product.slug).toBeUndefined()
+        const names = product.specs.map((spec) => spec.name)
+        expect(names, product.slug).not.toContain('Производитель')
+        expect(product.specs.find((spec) => spec.name === 'Страна происхождения')?.value).toBe(
+          'Китай',
+        )
+        expect(product.description[0], product.slug).toContain('Страна происхождения — Китай.')
+        expect(names, product.slug).toEqual(expect.arrayContaining(['Цоколь', 'Световой поток']))
+      }
+    }
+  })
+
+  it('в названии и характеристиках мощность и цоколь совпадают', () => {
+    for (const subcategory of getSubcategories(lampCategory)) {
+      for (const product of getProducts(lampCategory, subcategory.slug)) {
+        const spec = (name: string) => product.specs.find((item) => item.name === name)?.value
+        expect(product.name, product.slug).toContain(`${spec('Потребляемая мощность')}`)
+        expect(product.name.replace(/\s/g, ''), product.slug).toContain(
+          (spec('Цоколь') ?? '').replace(/\s/g, ''),
+        )
+        expect(product.slug, product.slug).toMatch(/^lampa-/)
+      }
+    }
+  })
+
+  it('в обозначениях цоколя и колбы только латинские буквы, незаполненных значений нет', () => {
+    for (const subcategory of getSubcategories(lampCategory)) {
+      for (const product of getProducts(lampCategory, subcategory.slug)) {
+        const text = [product.name, product.summary, ...product.description].join(' ')
+        // кириллические «Е27», «Т8», «А60» вместо латинских E27, T8, A60
+        expect(text, product.slug).not.toMatch(/[ЕТА]\d|undefined|NaN/)
+      }
+    }
+  })
+
+  it('позиции категории называем моделями, у кабеля остаются типоразмеры', () => {
+    expect(getCategory(lampCategory)?.itemsNoun).toBe('модели')
+    expect(getCategory('kabel-provod')?.itemsNoun).toBeUndefined()
+  })
+})
+
+describe('лампы: выбор цветовой температуры', () => {
+  const lamps = products.filter((product) => product.categorySlug === 'lampy-promyshlennye')
+  const selectable = lamps.filter((product) => product.variants)
+
+  it('выбор 4000 К / 6500 К у десяти моделей, у остальных одна температура 6500 К или 6400 К', () => {
+    expect(selectable.map((product) => product.slug)).toEqual([
+      'lampa-svetodiodnaya-std-a60-10vt-e27',
+      'lampa-svetodiodnaya-std-a60-12vt-e27',
+      'lampa-svetodiodnaya-std-a60-15vt-e27',
+      'lampa-svetodiodnaya-std-a60-20vt-e27',
+      'lampa-svetodiodnaya-led-power-a80-30vt-e27',
+      'lampa-svetodiodnaya-led-power-a90-40vt-e27',
+      'lampa-svetodiodnaya-t8-10vt-g13-600mm',
+      'lampa-svetodiodnaya-t8-18vt-g13-1200mm',
+      'lampa-svetodiodnaya-t8-24vt-g13-1500mm',
+      'lampa-svetodiodnaya-t8-36vt-g13-1200mm-pro',
+    ])
+    for (const product of lamps.filter((item) => !item.variants)) {
+      const value = product.specs.find((spec) => spec.name === 'Цветовая температура')?.value
+      expect(value, product.slug).toMatch(/^6[45]00 К$/)
+    }
+  })
+
+  it('у исполнения свой slug для корзины, название в корзине с оттенком, фото общее', () => {
+    for (const product of selectable) {
+      expect(
+        product.variants?.options.map((option) => option.label),
+        product.slug,
+      ).toEqual(['4000 К', '6500 К'])
+      expect(product.variants?.sharedPhotos, product.slug).toBe(true)
+      const option = product.variants?.options[1]
+      expect(option?.slug).toBe(`${product.slug}-6500k`)
+      expect(option && getCartEntry(option.slug)?.name).toBe(`${product.name} 6500 К`)
+      expect(product.name, product.slug).not.toMatch(/4000|6500/)
+      expect(product.specs.find((spec) => spec.name === 'Цветовая температура')?.value).toBe(
+        '4000 К и 6500 К (на выбор)',
+      )
     }
   })
 })

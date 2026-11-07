@@ -14,7 +14,7 @@ import {
 // Паттерн combobox со списком: фокус остаётся в поле, выбранный вариант указывает aria-activedescendant.
 const expanded = defineModel<boolean>('expanded', { default: false })
 
-const EXAMPLES = ['АВБбШв 4х16', 'провод синий', 'медный 6']
+const EXAMPLES = ['АВБбШв 4х16', 'провод синий', 'медный 6', 'лампа E27 20 Вт']
 const RECENT_KEY = 'agroed:search:recent:v1'
 const RECENT_LIMIT = 5
 const RECENT_SHOWN = 3
@@ -390,7 +390,7 @@ watch(
           aria-controls="site-search-list"
           :aria-expanded="panelOpen && options.length > 0"
           :aria-activedescendant="panelOpen ? activeId : undefined"
-          placeholder="Поиск: кабель, АВВГ, 4х16…"
+          placeholder="Поиск: кабель, лампа, АВВГ, E27…"
           enterkeyhint="search"
           autocomplete="off"
           autocapitalize="off"
@@ -466,7 +466,7 @@ watch(
             <div>
               <p class="font-semibold">Ничего не нашлось по «{{ trimmed }}»</p>
               <p class="mt-1 text-sm text-ink-muted">
-                Попробуйте марку (АВВГ, ПуВ), типоразмер (4х16) или цвет. Если нужного нет в
+                Попробуйте марку (АВВГ, ПуВ), типоразмер (4х16), цоколь (E27), мощность (18 Вт) или цвет. Если нужного нет в
                 списке, откройте подходящий раздел ниже.
               </p>
             </div>
@@ -603,7 +603,7 @@ watch(
             class="border-t border-line px-4 py-3 text-sm text-ink-muted"
           >
             Показаны первые {{ result.products.length }} из {{ result.totalProducts }}. Добавьте
-            марку, сечение или цвет, чтобы сузить выдачу.
+            марку, сечение, цоколь, мощность или цвет, чтобы сузить выдачу.
           </p>
 
           <div
