@@ -20,6 +20,11 @@ const COVERS = {
     'provod-pv-1-puv/provod-puv-1x10-siniy.webp',
     'kabel-avbbshv/kabel-avbbshv-4x16-ok-n.webp',
   ],
+  'svetilniki-svetodiodnye': [
+    'universalnye-paneli/svetilnik-svetodiodnyj-universalnyj-asl-30-036-36vt-prizma.webp',
+    'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-gs-2x1200-ip65.webp',
+    'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1/svetilnik-promyshlennyj-svetodiodnyj-ll-spp1-18vt-ip65.webp',
+  ],
   'lampy-promyshlennye': [
     'lampy-svetodiodnye-led-power-e27-e40/lampa-svetodiodnaya-led-power-60vt-e27-e40.webp',
     'lampy-svetodiodnye-std-a60-e27/lampa-svetodiodnaya-std-a60-20vt-e27.webp',

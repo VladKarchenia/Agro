@@ -1,6 +1,10 @@
 import { categories } from './categories'
 import { avbbshvData } from './subcategories/avbbshv'
 import { avvgData } from './subcategories/avvg'
+import { fixturesLlSpp1Data } from './subcategories/fixtures-ll-spp1'
+import { fixturesLpoData } from './subcategories/fixtures-lpo'
+import { fixturesT8Ip65Data } from './subcategories/fixtures-t8-ip65'
+import { fixturesUniversalPanelsData } from './subcategories/fixtures-universal-panels'
 import { lampsCompactKlData } from './subcategories/lamps-compact-kl'
 import { lampsFluorescentT8Data } from './subcategories/lamps-fluorescent-t8'
 import { lampsLedPowerData } from './subcategories/lamps-led-power'
@@ -39,6 +43,10 @@ const data: SubcategoryData[] = [
   lampsLedT8Data,
   lampsFluorescentT8Data,
   lampsCompactKlData,
+  fixturesLpoData,
+  fixturesLlSpp1Data,
+  fixturesT8Ip65Data,
+  fixturesUniversalPanelsData,
 ]
 const subcategories: Subcategory[] = data.map((item) => item.subcategory)
 const products: Product[] = data.flatMap((item) => item.products)

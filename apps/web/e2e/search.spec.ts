@@ -17,6 +17,20 @@ async function openSearch(page: Page) {
 const options = (page: Page) => page.getByRole('listbox').getByRole('option')
 
 test.describe('Поиск по каталогу', () => {
+  test('находит светильник и лампу по обозначению, мощности и цоколю', async ({ page }) => {
+    await open(page, '/')
+    const input = await openSearch(page)
+    await input.fill('LL-SPP1 36 Вт')
+    await expect(
+      options(page).filter({ hasText: 'Светильник светодиодный LL-SPP1 36 Вт' }),
+    ).toBeVisible()
+
+    await input.fill('лампа е27 20вт')
+    await expect(
+      options(page).filter({ hasText: 'Лампа светодиодная STD-A60 20 Вт E27' }),
+    ).toBeVisible()
+  })
+
   test('находит товар и открывает его по клику', async ({ page }) => {
     await open(page, '/')
     const input = await openSearch(page)

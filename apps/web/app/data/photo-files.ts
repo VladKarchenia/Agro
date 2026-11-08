@@ -116,4 +116,60 @@ export const PHOTO_FILES: Record<string, [number, number]> = {
   'provod-pvs/provod-pvs-ts-4x6-1x6-belyi.webp': [1192, 894],
   'provod-sip/provod-sip-4-2x16.webp': [1200, 900],
   'provod-sip/provod-sip-4-4x16.webp': [1200, 900],
+  'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1/svetilnik-promyshlennyj-svetodiodnyj-ll-spp1-18vt-ip65-2.webp':
+    [1200, 900],
+  'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1/svetilnik-promyshlennyj-svetodiodnyj-ll-spp1-18vt-ip65.webp':
+    [1200, 900],
+  'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1/svetilnik-promyshlennyj-svetodiodnyj-ll-spp1-36vt-ip65-2.webp':
+    [1200, 900],
+  'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1/svetilnik-promyshlennyj-svetodiodnyj-ll-spp1-36vt-ip65.webp':
+    [1200, 900],
+  'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1/svetilnik-promyshlennyj-svetodiodnyj-ll-spp1-50vt-ip65-2.webp':
+    [1200, 900],
+  'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1/svetilnik-promyshlennyj-svetodiodnyj-ll-spp1-50vt-ip65.webp':
+    [1200, 900],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-gs-2x1200-ip65.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-gs-2x600-ip65-2.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-gs-2x600-ip65-3.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-gs-2x600-ip65.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-m-2x1200-ip40-2.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-m-2x1200-ip40.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-ts-1x1200-ip65.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-ts-2x1200-ip65.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-ts-2x1500-ip65.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-ts-2x600-ip65-2.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-ts-2x600-ip65-3.webp': [
+    1200, 900,
+  ],
+  'svetilniki-dlya-led-lamp-t8-g13-ip65/svetilnik-dlya-led-lamp-t8-g13-led-ts-2x600-ip65.webp': [
+    1200, 900,
+  ],
+  'svetilniki-svetodiodnye-lpo/svetilnik-svetodiodnyj-lpo-eco-u-1200-m-36vt.webp': [1200, 900],
+  'svetilniki-svetodiodnye-lpo/svetilnik-svetodiodnyj-lpo-eco-u-600-m-18vt.webp': [1200, 900],
+  'svetilniki-svetodiodnye-lpo/svetilnik-svetodiodnyj-lpo-ll-u-1200-p-50vt.webp': [1200, 900],
+  'universalnye-paneli/svetilnik-svetodiodnyj-universalnyj-asl-30-036-36vt-prizma.webp': [
+    1200, 900,
+  ],
+  'universalnye-paneli/svetilnik-svetodiodnyj-universalnyj-asl-33-040-40vt-opal.webp': [1200, 900],
+  'universalnye-paneli/svetilnik-svetodiodnyj-universalnyj-asl33-036-m-36vt-opal.webp': [1200, 900],
 }

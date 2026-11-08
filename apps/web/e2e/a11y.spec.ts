@@ -44,6 +44,11 @@ const PAGES: [string, string][] = [
     'товар лампа',
     '/catalog/lampy-promyshlennye/lampy-svetodiodnye-t8-g13/lampa-svetodiodnaya-t8-18vt-g13-1200mm',
   ],
+  ['категория светильников', '/catalog/svetilniki-svetodiodnye'],
+  [
+    'товар светильник',
+    '/catalog/svetilniki-svetodiodnye/universalnye-paneli/svetilnik-svetodiodnyj-universalnyj-asl33-036-m-36vt-opal',
+  ],
   ['политика', '/privacy'],
   ['согласие', '/consent'],
   ['контакты', '/contacts'],

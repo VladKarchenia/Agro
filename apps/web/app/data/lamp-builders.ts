@@ -1,4 +1,16 @@
+import {
+  SELECTABLE_TEMPERATURE,
+  SELECTABLE_TEMPERATURE_SPEC,
+  temperatureVariants,
+} from './color-temperature'
 import type { Product, ProductSpec, SubcategoryData } from './types'
+
+// Файлы ламп берут выбор оттенка отсюда же
+export {
+  CHOICE_NOTE,
+  COLOR_TEMPERATURE_HINT,
+  SELECTABLE_TEMPERATURE,
+} from './color-temperature'
 
 // Общие помощники для ламп: характеристики в едином порядке, сборка товара, повторяющиеся тексты.
 // Страна происхождения — Китай (со слов заказчика). Производитель и бренд умышленно не указываем.
@@ -85,7 +97,7 @@ export function lampProduct(input: LampInput): Product {
       index === 0 ? `${paragraph} Страна происхождения — ${LAMP_COUNTRY}.` : paragraph,
     ),
     specs: lampSpecs(
-      selectable ? { ...input.specs, colorTemperature: '4000 К и 6500 К (на выбор)' } : input.specs,
+      selectable ? { ...input.specs, colorTemperature: SELECTABLE_TEMPERATURE_SPEC } : input.specs,
     ),
     price: null,
     variants: selectable ? temperatureVariants(input.slug) : undefined,
@@ -106,27 +118,3 @@ export const NOT_FOR_HOME =
 /** Что означает IP20: полезно там, где в каталоге названы открытые площадки */
 export const IP20_NOTE =
   'Степень защиты IP20 означает защиту от попадания твёрдых предметов крупнее 12,5 мм, но не от воды и влаги. Если лампу нужно установить на открытой площадке или в сыром помещении, её ставят в закрытый влагозащищённый светильник.'
-
-/** Значение цветовой температуры для моделей, которые есть в двух оттенках */
-export const SELECTABLE_TEMPERATURE = '4000 К или 6500 К'
-
-/** Выбор оттенка на странице товара: у каждого оттенка свой slug (в корзину идёт он), фото общее */
-function temperatureVariants(slug: string) {
-  return {
-    title: 'Цветовая температура',
-    chooseLabel: 'Выбрать оттенок',
-    sharedPhotos: true,
-    options: [
-      { slug: `${slug}-4000k`, label: '4000 К' },
-      { slug: `${slug}-6500k`, label: '6500 К' },
-    ],
-  }
-}
-
-/** Для моделей с выбором оттенка: пояснение на странице товара и в вопросах */
-export const CHOICE_NOTE =
-  'Цветовая температура выбирается на этой странице: 4000 К — нейтральный белый свет, 6500 К — холодный белый.'
-
-/** Подсказка про оттенки для разделов «Как выбрать» */
-export const COLOR_TEMPERATURE_HINT =
-  'Цветовая температура. Около 4000 К свет нейтрально-белый, около 6500 К холодный, ближе к дневному. Оттенок подбирают по назначению помещения и по уже установленным лампам, чтобы свет в помещении не отличался.'

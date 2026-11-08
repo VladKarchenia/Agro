@@ -16,4 +16,11 @@ export const categories: Category[] = [
     itemsNoun: 'модели',
     cover: { src: '/images/categories/lampy-promyshlennye.webp', width: 1200, height: 900 },
   },
+  {
+    slug: 'svetilniki-svetodiodnye',
+    title: 'Светильники светодиодные',
+    description: 'Светодиодные светильники для общественных, торговых и производственных помещений',
+    itemsNoun: 'модели',
+    cover: { src: '/images/categories/svetilniki-svetodiodnye.webp', width: 1200, height: 900 },
+  },
 ]

@@ -445,25 +445,119 @@ describe('лампы: выбор цветовой температуры', () =>
 
 describe('обложки категорий', () => {
   const publicDir = join(__dirname, '..', '..', 'public')
+  const withCover = getCategories().filter((category) => category.cover)
 
-  it('у каждой категории есть обложка, и её файл лежит в public/images/categories', () => {
+  it('обложка обязательна, как только у категории есть хотя бы три фото товаров (pnpm covers)', () => {
     for (const category of getCategories()) {
-      expect(category.cover, category.slug).toBeDefined()
+      const folders = getSubcategories(category.slug).map((subcategory) => subcategory.slug)
+      const photos = Object.keys(PHOTO_FILES).filter((file) =>
+        folders.includes(file.split('/')[0] ?? ''),
+      )
+      if (photos.length >= 3) expect(category.cover, category.slug).toBeDefined()
+    }
+  })
+
+  it('файл обложки лежит в public/images/categories, называется по категории и снят в 4:3', () => {
+    expect(withCover.length).toBeGreaterThan(0)
+    for (const category of withCover) {
       const src = category.cover?.src ?? ''
       expect(src, category.slug).toBe(`/images/categories/${category.slug}.webp`)
       expect(() => readFileSync(join(publicDir, src)), category.slug).not.toThrow()
-      expect(
-        Math.abs((category.cover?.width ?? 0) / (category.cover?.height ?? 1) - 4 / 3),
-      ).toBeLessThan(0.01)
+      const ratio = (category.cover?.width ?? 0) / (category.cover?.height ?? 1)
+      expect(Math.abs(ratio - 4 / 3), category.slug).toBeLessThan(0.01)
     }
   })
 
   it('в папке обложек нет файлов без категории', () => {
     const files = readdirSync(join(publicDir, 'images', 'categories')).sort()
-    expect(files).toEqual(
-      getCategories()
-        .map((category) => `${category.slug}.webp`)
-        .sort(),
+    expect(files).toEqual(withCover.map((category) => `${category.slug}.webp`).sort())
+  })
+})
+
+describe('светильники светодиодные', () => {
+  const fixtureCategory = 'svetilniki-svetodiodnye'
+  const counts: Record<string, number> = {
+    'svetilniki-svetodiodnye-lpo': 3,
+    'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1': 3,
+    'svetilniki-dlya-led-lamp-t8-g13-ip65': 7,
+    'universalnye-paneli': 3,
+  }
+
+  it('в категории четыре подкатегории в заданном порядке и нужное число товаров в каждой', () => {
+    expect(getSubcategories(fixtureCategory).map((item) => item.slug)).toEqual(Object.keys(counts))
+    for (const [slug, count] of Object.entries(counts)) {
+      expect(getProducts(fixtureCategory, slug), slug).toHaveLength(count)
+    }
+  })
+
+  it('у светильников нет бренда, производителя и страны, а цена пустая', () => {
+    for (const subcategory of getSubcategories(fixtureCategory)) {
+      for (const product of getProducts(fixtureCategory, subcategory.slug)) {
+        const names = product.specs.map((spec) => spec.name)
+        expect(product.brand, product.slug).toBeUndefined()
+        expect(names, product.slug).not.toContain('Производитель')
+        expect(names, product.slug).not.toContain('Страна происхождения')
+        expect(product.price, product.slug).toBeNull()
+        expect(product.slug, product.slug).toMatch(/^svetilnik-/)
+      }
+    }
+  })
+
+  it('у светильников для ламп T8 указано число ламп и монтажная пластина: у LED-GS есть, у остальных нет', () => {
+    const t8 = getProducts(fixtureCategory, 'svetilniki-dlya-led-lamp-t8-g13-ip65')
+    const spec = (slug: string, name: string) =>
+      t8.find((product) => product.slug === slug)?.specs.find((item) => item.name === name)?.value
+    for (const product of t8) {
+      const plate = product.specs.find((item) => item.name === 'Монтажная пластина')?.value
+      expect(plate, product.slug).toBe(product.slug.includes('-led-gs-') ? 'Есть' : 'Нет')
+    }
+    expect(spec('svetilnik-dlya-led-lamp-t8-g13-led-ts-1x1200-ip65', 'Количество ламп')).toBe(
+      '1 × T8, 1200 мм',
     )
+    expect(spec('svetilnik-dlya-led-lamp-t8-g13-led-m-2x1200-ip40', 'Степень защиты')).toBe('IP40')
+  })
+
+  it('мощность и световой поток в названиях и характеристиках не расходятся', () => {
+    for (const product of getProducts(fixtureCategory, 'svetilniki-svetodiodnye-lpo')) {
+      const power = product.specs.find((item) => item.name === 'Потребляемая мощность')?.value
+      expect(product.name, product.slug).toContain(power ?? '?')
+    }
+    for (const product of getProducts(fixtureCategory, 'universalnye-paneli')) {
+      expect(
+        product.specs.find((item) => item.name === 'Световой поток')?.value,
+        product.slug,
+      ).toBe('3800 лм')
+    }
+  })
+
+  it('выбор 4000 К / 6500 К у трёх панелей и LL-SPP1 на 36 Вт, у остальных один оттенок или «зависит от лампы»', () => {
+    const all = getSubcategories(fixtureCategory).flatMap((subcategory) =>
+      getProducts(fixtureCategory, subcategory.slug),
+    )
+    const selectable = all.filter((product) => product.variants).map((product) => product.slug)
+    expect(selectable).toEqual([
+      'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1-36vt-ip65',
+      'svetilnik-svetodiodnyj-universalnyj-asl-30-036-36vt-prizma',
+      'svetilnik-svetodiodnyj-universalnyj-asl33-036-m-36vt-opal',
+      'svetilnik-svetodiodnyj-universalnyj-asl-33-040-40vt-opal',
+    ])
+    for (const product of all.filter((item) => item.variants)) {
+      expect(
+        product.variants?.options.map((option) => option.label),
+        product.slug,
+      ).toEqual(['4000 К', '6500 К'])
+      expect(product.variants?.sharedPhotos, product.slug).toBe(true)
+      expect(product.name, product.slug).not.toMatch(/4000|6500/)
+      const temperature = product.specs.find((item) => item.name === 'Цветовая температура')?.value
+      expect(temperature, product.slug).toBe('4000 К и 6500 К (на выбор)')
+    }
+    for (const product of all.filter((item) => !item.variants)) {
+      const temperature = product.specs.find((item) => item.name === 'Цветовая температура')?.value
+      expect(temperature, product.slug).toMatch(/^(6500 К|Зависит от лампы)$/)
+    }
+  })
+
+  it('позиции называем моделями', () => {
+    expect(getCategory(fixtureCategory)?.itemsNoun).toBe('модели')
   })
 })

@@ -293,10 +293,10 @@ test.describe('Каталог: лампы промышленные', () => {
 })
 
 test.describe('Каталог: обложки категорий', () => {
-  test('на странице каталога у каждой категории загружена обложка 4:3', async ({ page }) => {
+  test('на странице каталога у каждой категории загружена обложка', async ({ page }) => {
     await open(page, '/catalog')
     const covers = page.getByRole('main').locator('a[href^="/catalog/"] img')
-    await expect(covers).toHaveCount(2)
+    await expect(covers).toHaveCount(3)
     for (const cover of await covers.all()) {
       await expect(cover).toHaveAttribute('alt', '')
       await expect
@@ -322,6 +322,63 @@ test.describe('Каталог: обложки категорий', () => {
 
   test('на главной у категорий тоже есть обложки', async ({ page }) => {
     await open(page, '/')
-    await expect(page.getByRole('main').locator('a[href^="/catalog/"] img')).toHaveCount(2)
+    await expect(page.getByRole('main').locator('a[href^="/catalog/"] img')).toHaveCount(3)
+  })
+})
+
+test.describe('Каталог: светильники светодиодные', () => {
+  const FIXTURES_PATH = '/catalog/svetilniki-svetodiodnye'
+
+  test('каталог → категория светильников → подкатегория T8 → товар', async ({ page }) => {
+    await open(page, '/catalog')
+    await page.getByRole('link', { name: /Светильники светодиодные/ }).click()
+    await expect(page).toHaveURL(new RegExp(`${FIXTURES_PATH}$`))
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Светильники светодиодные' }),
+    ).toBeVisible()
+    await expect(page.getByRole('main').getByRole('heading', { level: 2 })).toHaveCount(4)
+
+    await page.getByRole('link', { name: /Светильники для LED ламп T8 G13 IP65/ }).click()
+    await expect(page.getByRole('heading', { level: 2, name: 'Модели' })).toBeVisible()
+    await expect(page.getByRole('article')).toHaveCount(7)
+
+    await productCard(page, 'Светильник для ламп T8 LED-GS-2×600 IP65')
+      .getByRole('link')
+      .first()
+      .click()
+    await expect(page.getByText('Монтажная пластина', { exact: true })).toBeVisible()
+    await expect(page.getByText('Есть', { exact: true })).toBeVisible()
+    await expect(page.getByText('Цена по запросу').first()).toBeVisible()
+  })
+
+  test('у панели оттенок 4000 К / 6500 К выбирается на странице и попадает в корзину', async ({
+    page,
+  }) => {
+    const panel = `${FIXTURES_PATH}/universalnye-paneli/svetilnik-svetodiodnyj-universalnyj-asl33-036-m-36vt-opal`
+    await open(page, `${FIXTURES_PATH}/universalnye-paneli`)
+    const card = productCard(page, 'Панель светодиодная ASL33-036-M 36 Вт Опал').first()
+    await expect(card.getByRole('link', { name: 'Выбрать оттенок' })).toBeVisible()
+
+    await open(page, panel)
+    const temperature = page.getByRole('group', { name: 'Цветовая температура' })
+    await expect(temperature.getByRole('radio')).toHaveCount(2)
+    await temperature.getByText('6500 К', { exact: true }).click()
+    await page.getByRole('button', { name: /^В корзину/ }).click()
+    await expect
+      .poll(() => readCart(page))
+      .toEqual([
+        { slug: 'svetilnik-svetodiodnyj-universalnyj-asl33-036-m-36vt-opal-6500k', quantity: 1 },
+      ])
+  })
+
+  test('светильник кладётся в корзину без выбора вариантов', async ({ page }) => {
+    await open(
+      page,
+      `${FIXTURES_PATH}/svetilniki-svetodiodnye-lpo/svetilnik-svetodiodnyj-lpo-eco-u-600-m-18vt`,
+    )
+    await page.getByRole('button', { name: /^В корзину/ }).click()
+    await expect
+      .poll(() => readCart(page))
+      .toEqual([{ slug: 'svetilnik-svetodiodnyj-lpo-eco-u-600-m-18vt', quantity: 1 }])
   })
 })
