@@ -358,16 +358,14 @@ describe('лампы промышленные', () => {
     }
   })
 
-  it('у ламп нет бренда и производителя (скрыты умышленно), страна — Китай', () => {
+  it('у ламп нет бренда, производителя и страны происхождения (скрыты умышленно)', () => {
     for (const subcategory of getSubcategories(lampCategory)) {
       for (const product of getProducts(lampCategory, subcategory.slug)) {
         expect(product.brand, product.slug).toBeUndefined()
         const names = product.specs.map((spec) => spec.name)
         expect(names, product.slug).not.toContain('Производитель')
-        expect(product.specs.find((spec) => spec.name === 'Страна происхождения')?.value).toBe(
-          'Китай',
-        )
-        expect(product.description[0], product.slug).toContain('Страна происхождения — Китай.')
+        expect(names, product.slug).not.toContain('Страна происхождения')
+        expect(product.description.join(' '), product.slug).not.toMatch(/Китай|происхождения/)
         expect(names, product.slug).toEqual(expect.arrayContaining(['Цоколь', 'Световой поток']))
       }
     }

@@ -13,10 +13,9 @@ export {
 } from './color-temperature'
 
 // Общие помощники для ламп: характеристики в едином порядке, сборка товара, повторяющиеся тексты.
-// Страна происхождения — Китай (со слов заказчика). Производитель и бренд умышленно не указываем.
+// Производитель, бренд и страну происхождения умышленно не указываем (решение заказчика).
 
 export const LAMP_CATEGORY = 'lampy-promyshlennye'
-export const LAMP_COUNTRY = 'Китай'
 
 export type LampKind = 'Светодиодная' | 'Люминесцентная' | 'Компактная люминесцентная'
 
@@ -49,7 +48,6 @@ export interface LampSpecInput {
 export function lampSpecs(input: LampSpecInput): ProductSpec[] {
   const specs: (ProductSpec | undefined)[] = [
     { name: 'Тип лампы', value: input.kind },
-    { name: 'Страна происхождения', value: LAMP_COUNTRY },
     { name: 'Цоколь', value: input.socket },
     { name: 'Потребляемая мощность', value: `${input.power} Вт` },
     { name: 'Световой поток', value: `${input.luminousFlux} лм` },
@@ -93,9 +91,7 @@ export function lampProduct(input: LampInput): Product {
     subcategorySlug: input.subcategory.slug,
     name: input.name,
     summary: input.summary,
-    description: input.description.map((paragraph, index) =>
-      index === 0 ? `${paragraph} Страна происхождения — ${LAMP_COUNTRY}.` : paragraph,
-    ),
+    description: input.description,
     specs: lampSpecs(
       selectable ? { ...input.specs, colorTemperature: SELECTABLE_TEMPERATURE_SPEC } : input.specs,
     ),
