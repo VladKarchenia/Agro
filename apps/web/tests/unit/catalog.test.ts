@@ -479,9 +479,11 @@ describe('светильники светодиодные', () => {
     'svetilnik-promyshlennyj-svetodiodnyj-ll-spp1': 3,
     'svetilniki-dlya-led-lamp-t8-g13-ip65': 7,
     'universalnye-paneli': 3,
+    'svetilniki-konsolnye-dku-led': 6,
+    'svetilniki-podvesnye-dsp-ufo-led': 3,
   }
 
-  it('в категории четыре подкатегории в заданном порядке и нужное число товаров в каждой', () => {
+  it('в категории шесть подкатегорий в заданном порядке и нужное число товаров в каждой', () => {
     expect(getSubcategories(fixtureCategory).map((item) => item.slug)).toEqual(Object.keys(counts))
     for (const [slug, count] of Object.entries(counts)) {
       expect(getProducts(fixtureCategory, slug), slug).toHaveLength(count)
@@ -551,7 +553,7 @@ describe('светильники светодиодные', () => {
     }
     for (const product of all.filter((item) => !item.variants)) {
       const temperature = product.specs.find((item) => item.name === 'Цветовая температура')?.value
-      expect(temperature, product.slug).toMatch(/^(6500 К|Зависит от лампы)$/)
+      expect(temperature, product.slug).toMatch(/^(6500 К|5000 К|Зависит от лампы)$/)
     }
   })
 

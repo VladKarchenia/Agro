@@ -19,7 +19,8 @@ export const categories: Category[] = [
   {
     slug: 'svetilniki-svetodiodnye',
     title: 'Светильники светодиодные',
-    description: 'Светодиодные светильники для общественных, торговых и производственных помещений',
+    description:
+      'Светодиодные светильники для помещений и уличного освещения: линейные, панели, консольные, подвесные',
     itemsNoun: 'модели',
     cover: { src: '/images/categories/svetilniki-svetodiodnye.webp', width: 1200, height: 900 },
   },

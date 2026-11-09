@@ -336,7 +336,7 @@ test.describe('Каталог: светильники светодиодные',
     await expect(
       page.getByRole('heading', { level: 1, name: 'Светильники светодиодные' }),
     ).toBeVisible()
-    await expect(page.getByRole('main').getByRole('heading', { level: 2 })).toHaveCount(4)
+    await expect(page.getByRole('main').getByRole('heading', { level: 2 })).toHaveCount(6)
 
     await page.getByRole('link', { name: /Светильники для LED ламп T8 G13 IP65/ }).click()
     await expect(page.getByRole('heading', { level: 2, name: 'Модели' })).toBeVisible()
